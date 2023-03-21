@@ -1,0 +1,23 @@
+{
+    "319630": {
+        "name": "Life is Strange",
+        "search_pattern": "0",
+        "patch_pattern": "0"
+    },
+    "367520": {
+        "name": "Hollow Knight",
+        "search_pattern": "0",
+        "patch_pattern": "1"
+    },
+    "1190460": {
+        "name": "Death Stranding",
+        "search_pattern": "1",
+        "patch_pattern": "2"
+    },
+    "1151640": {
+        "name": "Horizon Zero Dawn",
+        "search_pattern": "0",
+        "patch_pattern": "2",
+        "other": "#TODO Needs a DLSS fix"
+    }
+}
