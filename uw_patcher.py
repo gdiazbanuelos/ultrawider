@@ -14,15 +14,16 @@ search_pattern_hex = [b"\x39\x8e\xe3\x3f",b"\x55\x55\x15\x40"]
 # ie. patch pattern n is in the nth position
 patch_pattern_hex = ["=0xCD,0x90,0x18,0x40", "=0x60,0xE5,0x18,0x40", "=0x8E,0xE3,0x18,0x40"]
 
-def getOffsets(): 
+def getOffsets(appInfo):
     global target_file
     global search_pattern
     global patch_pattern
-    target_file = sys.argv[1]
+
+    target_file = appInfo["path"]
 
     #TODO create datebase to autoset these
-    search_pattern = getGameEntry(sys.argv[2])[0]
-    patch_pattern = getGameEntry(sys.argv[2])[1]
+    search_pattern = appInfo["search_pattern"]
+    patch_pattern = appInfo["patch_pattern"]
 
     with open(target_file, "rb") as f:
         data = f.read()
@@ -39,7 +40,10 @@ def getOffsets():
         i = offset + 1
 
     if len(offsets) == 0:
-        print("Pattern not found.")
+        print("Pattern not found. Game might already be patched")
+        print('')
+        print('==================')
+        return -1
     else:
         return offsets
 
@@ -60,15 +64,9 @@ def openJSON(file_path):
     return data
 
 
-def getGameEntry(steamAppID):
+def setGameEntry(appInfo):
     data = openJSON("games.json")
-    return [data[steamAppID]["search_pattern"], data[steamAppID]["patch_pattern"]]
-
-
-if __name__== "__main__":
-    if(len(sys.argv) != 3):
-        print("Usage: python3 this.py <file_path> <SteamAppID>")
-        sys.exit()
-
-    offsets = getOffsets()
-    patchOffsets(offsets)
+    appInfo["path"] = appInfo["path"] + data[appInfo["appID"]]["local_path"]
+    appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
+    appInfo["search_pattern"] = data[appInfo["appID"]]["search_pattern"]
+    appInfo["patch_pattern"] = data[appInfo["appID"]]["patch_pattern"]
