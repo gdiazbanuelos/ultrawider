@@ -1,6 +1,6 @@
 import winreg
 import vdf
-import uw_patcher
+import patcher
 import shutil
 import sys
 import os
@@ -29,7 +29,7 @@ def get_windows_registry_steam_apps():
                     game_names.append(game_id)
                     pass
             except FileNotFoundError:
-                #print(f"Error: Could not find 'Name' value for game with ID {game_id}")
+                print(f"Error: Could not find 'Name' value for game with ID {game_id}")
                 pass
         
         return game_names
@@ -43,14 +43,27 @@ def get_steam_apps(windows_registry_steam_apps):
     libraries = libraries["libraryfolders"]
 
     output = []
+    # Get all games installed that are listed in the default Steam libraryfolders.vdf
     for lib in libraries:
         for game in libraries[lib]["apps"]:
             if(game in windows_registry_steam_apps):
-                #output.append([game, libraries[lib]["path"]])
                 output.append({
                     "appID": game,
                     "library": libraries[lib]["path"]
                     })
+    
+    # Manually search all appmanifest_xxx.acf files at each Steam library location
+    # for some reason, not all installed games are written to libraryfolders.vdf
+    for lib in libraries:
+        steam_library_paths = libraries[lib]["path"]
+        manifest_path = steam_library_paths + "\steamapps"
+        directory_list = os.listdir(manifest_path)
+        for files in directory_list:
+            if(re.match("^appmanifest_.*\.acf$", files)):
+                gameID = re.sub("appmanifest_|\.acf", "", files)
+                gameEntry = {"appID":gameID, "library":steam_library_paths}
+                if gameEntry not in output:
+                    output.append(gameEntry)
     return output
 
 
@@ -80,13 +93,14 @@ def main():
         print(game)
 
         # if(game["appID"] in ("319630","367520","1190460")):
-        #     uw_patcher.setGameEntry(game)
+        #     patcher.setGameEntry(game)
         #     print(game)
         #     make_target_copy(game)
-        #     offsets = uw_patcher.getOffsets(game)
+        #     offsets = patcher.getOffsets(game)
         #     if(offsets != -1):
-        #         uw_patcher.patchOffsets(offsets)
+        #         patcher.patchOffsets(offsets)
 
+    print("Number of Steam Apps installed:", len(steam_apps))
     return steam_apps
 
 
@@ -99,6 +113,7 @@ def createGUI(steam_apps):
 
     # All the stuff inside your window.
     layout = [  [sg.Text('Ultrawide Patcher')],
+                [sg.Text('Number of Steam Apps installed: ' + str(len(installed_games)))],
                 installed_games,
                 [sg.Text('Enter something on Row 2'), sg.InputText()],
                 [sg.Button('Ok'), sg.Button('Cancel')] ]
