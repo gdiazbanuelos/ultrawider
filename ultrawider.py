@@ -5,6 +5,7 @@ import shutil
 import sys
 import os
 import PySimpleGUI as sg
+import re
 
 
 def get_windows_registry_steam_apps():
@@ -28,10 +29,7 @@ def get_windows_registry_steam_apps():
                     game_names.append(game_id)
                     pass
             except FileNotFoundError:
-                #print(game_id)
                 #print(f"Error: Could not find 'Name' value for game with ID {game_id}")
-                #print("No name value", game_id)
-                #game_names.append(game_id)
                 pass
         
         return game_names
@@ -53,8 +51,6 @@ def get_steam_apps(windows_registry_steam_apps):
                     "appID": game,
                     "library": libraries[lib]["path"]
                     })
-                #output["appID"] = {}
-                #output["appID"]["library"] = libraries[lib]["path"]
     return output
 
 
@@ -63,6 +59,7 @@ def get_app_mainifest(steam_app):
     game_manifest = vdf.parse(open(path_to_game_manifest))
     path_to_game_files = steam_app["library"]+"\steamapps\common\\"+game_manifest["AppState"]["installdir"]
     steam_app["name"] = game_manifest["AppState"]["name"]
+    steam_app["name"] = re.sub(r'[^A-Za-z0-9:,. ]+', '', steam_app["name"])
     steam_app["path"] = path_to_game_files
 
 
