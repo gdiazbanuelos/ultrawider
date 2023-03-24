@@ -8,7 +8,8 @@ MFW when a game doesn't have native ultrawide support:
 
 
 # Supported Games
-- Life is Strange
-- Hollow Knight
-- Death Stranding
-- Horizon Zero Dawn (soft of, no DLSS fix yet!)
+- Name (Steam App ID)
+- Life is Strange (319630)
+- Hollow Knight (367520)
+- Death Stranding (1190460)
+- Horizon Zero Dawn (1151640) (soft of, no DLSS fix yet!)
