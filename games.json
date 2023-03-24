@@ -1,21 +1,21 @@
 {
     "319630": {
         "name": "Life is Strange",
-        "local_path":"\\Binaries\\Win32\\LifeIsStrange.exe",
+        "local_path":"/Binaries/Win32/LifeIsStrange.exe",
         "target_file": "LifeIsStrange.exe",
         "search_pattern": "0",
         "patch_pattern": "0"
     },
     "367520": {
         "name": "Hollow Knight",
-        "local_path": "\\hollow_knight_Data\\Managed\\Assembly-CSharp.dll",
+        "local_path": "/hollow_knight_Data/Managed/Assembly-CSharp.dll",
         "target_file": "Assembly-CSharp.dll",
         "search_pattern": "0",
         "patch_pattern": "1"
     },
     "1190460": {
         "name": "Death Stranding",
-        "local_path": "\\ds.exe",
+        "local_path": "/ds.exe",
         "target_file": "ds.exe",
         "search_pattern": "1",
         "patch_pattern": "2",
@@ -23,7 +23,7 @@
     },
     "1151640": {
         "name": "Horizon Zero Dawn",
-        "local_path": "\\HorizonZeroDawn.exe",
+        "local_path": "/HorizonZeroDawn.exe",
         "target_file": "HorizonZeroDawn.exe",
         "search_pattern": "0",
         "patch_pattern": "2",
