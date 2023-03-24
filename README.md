@@ -1,5 +1,5 @@
 # ultrawider
- This program is an auto patcher for games to enjoy in glorious ultrawide
+ An auto patcher for select games to be enjoyed in glorious 21:9 ultrawide
 
 MFW when a game doesn't have native ultrawide support:
 
