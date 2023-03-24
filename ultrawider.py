@@ -8,6 +8,10 @@ import re
 from sys import platform
 from pathlib import Path
 
+# Global list of all installed Steam apps
+# Example entry:
+# {'appID': '374320', 'library': 'D:\\SteamLibraryD', 'name': 'DARK SOULS III', 'path': WindowsPath('D:/SteamLibraryD/steamapps/common/DARK SOULS III')}
+steam_apps = None
 
 def get_steam_apps():
     steam_path = ""
@@ -86,22 +90,20 @@ def get_installed_games():
         if(game["appID"] in ("319630","367520","1190460")):
             #patchGame(game)
             pass
-            
-
     print("Number of Steam Apps installed:", len(steam_apps))
     return steam_apps
 
 
 def patchGame(steam_app):
     patcher.setGameEntry(steam_app)
-    #print(steam_app)
     make_target_copy(steam_app)
     offsets = patcher.getOffsets(steam_app)
     if(offsets != -1):
         patcher.patchOffsets(offsets)
 
 
-def createGUI(steam_apps):
+def createGUI():
+    global steam_apps
     sg.theme('DarkAmber')   # Add a touch of color
 
     installed_games = []
@@ -134,8 +136,9 @@ def createGUI(steam_apps):
 
 
 def main():
+    global steam_apps 
     steam_apps = get_installed_games()
-    createGUI(steam_apps)
+    createGUI()
 
 
 if __name__ == "__main__":
