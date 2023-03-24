@@ -7,6 +7,7 @@ import PySimpleGUI as sg
 import re
 from sys import platform
 from pathlib import Path
+import json
 
 # Global list of all installed Steam apps
 # Example entry:
@@ -86,11 +87,6 @@ def get_installed_games():
     steam_apps = get_steam_apps()
     for game in steam_apps:
         get_app_mainifest(game)
-        print(game)
-        if(game["appID"] in ("319630","367520","1190460")):
-            #patchGame(game)
-            pass
-    print("Number of Steam Apps installed:", len(steam_apps))
     return steam_apps
 
 
@@ -99,17 +95,34 @@ def patchGame(steam_app):
     make_target_copy(steam_app)
     offsets = patcher.getOffsets(steam_app)
     if(offsets != -1):
-        patcher.patchOffsets(offsets)
+        return patcher.patchOffsets(offsets)
+
+
+def get_selected_game(appID):
+    for game in steam_apps:
+        if(appID == game["appID"]):
+            print(game)
+            return game
+
+
+
+def openJSON(file_path):   
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data
 
 
 def createGUI():
     global steam_apps
     sg.theme('DarkAmber')   # Add a touch of color
 
+    patch_list_dictionary = openJSON("games.json")
+    patch_list = list(patch_list_dictionary.keys())
     installed_games = []
     for game in steam_apps:
-        installed_games.append(
-            "{}  (ID:{})".format(game["name"], game["appID"]))
+        if game["appID"] in patch_list:
+            installed_games.append(
+                "{}  ({})".format(game["name"], game["appID"]))
 
     # All the stuff inside your window.
     layout = [[sg.Text(text='Ultrawider',
@@ -117,21 +130,33 @@ def createGUI():
                        size=20,
                        expand_x=True,
                        justification='center')],
-              [sg.Text('Number of Steam Apps installed: ' +
+              [sg.Text('Number of patchable Steam Apps installed: ' +
                        str(len(installed_games)))],
               [sg.Listbox(values=installed_games, size=(100, 15),
                           enable_events=True, key='-LIST-')],
-              [sg.Text('Select a game to patch!', key='-CURRENTGAME-')]]
+              [sg.Text('Select a game to patch!', key='-CURRENTGAME-'), sg.Button("Patch!", key='CURRENTGAME')],
+              [sg.Text("", key="-OUTPUT-")]]
 
     # Create the Window
     window = sg.Window('Ultrawider', layout)
     # Event Loop to process "events" and get the "values" of the inputs
+    selected_game = []
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Cancel':  # if user closes window or clicks cancel
             break
         if event == "-LIST-":
             window['-CURRENTGAME-'].update(values['-LIST-'][0])
+            selected_game = values['-LIST-']
+            window['-OUTPUT-'].update("")
+        if event == "CURRENTGAME":
+            pattern = r"\(([^()]+)\)[^()]*$"
+            appID = re.findall(pattern, selected_game[0])[-1]
+            app = get_selected_game(appID)
+            if (patchGame(app)):
+                window['-OUTPUT-'].update("Patching successful")
+            else:
+                window['-OUTPUT-'].update("Hex offset pattern not found. Game might already be patched")
     window.close()
 
 

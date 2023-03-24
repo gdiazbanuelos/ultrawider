@@ -22,6 +22,8 @@
     },
     "1151640": {
         "name": "Horizon Zero Dawn",
+        "local_path": "\\HorizonZeroDawn.exe",
+        "target_file": "HorizonZeroDawn.exe",
         "search_pattern": "0",
         "patch_pattern": "2",
         "other": "#TODO Needs a DLSS fix"

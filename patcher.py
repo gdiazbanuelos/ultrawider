@@ -56,6 +56,7 @@ def patchOffsets(offsets):
     c_script_path = "./hexalter"
     result = subprocess.run([c_script_path] + [target_file] + [offset_patches][0], capture_output=True)
     print(result.stdout.decode())
+    return 1
 
 
 def openJSON(file_path):   
