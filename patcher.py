@@ -1,6 +1,8 @@
 import subprocess
 import json
 from pathlib import Path
+import os
+import sys
 
 target_file = None
 search_pattern = None
@@ -42,9 +44,6 @@ def getOffsets(appInfo):
         i = offset + 1
 
     if len(offsets) == 0:
-        print("Pattern not found. Game might already be patched")
-        print('')
-        print('==================')
         return -1
     else:
         return offsets
@@ -55,9 +54,12 @@ def patchOffsets(offsets):
     for offset in offsets:
         offset_patches.append(offset+patch_pattern_hex[int(patch_pattern)])
 
-    c_script_path = "./hexalter"
-    result = subprocess.run([c_script_path] + [target_file] + [offset_patches][0], capture_output=True)
-    print(result.stdout.decode())
+
+    bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    path_to_help = os.path.abspath(os.path.join(bundle_dir,'hexalter.exe'))
+
+    result = subprocess.run([str(path_to_help)] + [target_file] + [offset_patches][0], capture_output=True)
+    #print(result.stdout.decode())
     return 1
 
 
@@ -68,9 +70,10 @@ def openJSON(file_path):
 
 
 def setGameEntry(appInfo):
-    data = openJSON("games.json")
+    bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    path_to_help = os.path.abspath(os.path.join(bundle_dir,'games.json'))
+    data = openJSON(path_to_help)
     appInfo["path"] = Path(str(appInfo["path"]) + data[appInfo["appID"]]["local_path"])
-    print(appInfo["path"])
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
     appInfo["search_pattern"] = data[appInfo["appID"]]["search_pattern"]
     appInfo["patch_pattern"] = data[appInfo["appID"]]["patch_pattern"]

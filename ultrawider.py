@@ -25,8 +25,10 @@ def get_steam_apps():
             "/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
         if (steam_path.exists()):
             print("Found default Steam '{}' file!".format(steam_path.name))
+            pass
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
+            pass
     elif platform == "darwin":
         # OS X
         pass
@@ -35,8 +37,10 @@ def get_steam_apps():
             'C:/Program Files (x86)/Steam/steamapps/libraryfolders.vdf')
         if (steam_path.exists()):
             print("Found default Steam '{}' file!".format(steam_path.name))
+            pass
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
+            pass
 
     libraries = vdf.parse(open(steam_path))
     libraries = libraries["libraryfolders"]
@@ -86,7 +90,7 @@ def make_target_copy(appInfo):
             appInfo["path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
         backupout = ("Made a backup of '{}' for {} in the backups folder!".format(
             appInfo["target_file"], appInfo["name"]))
-        print(backupout)
+        #print(backupout)
         
         # Creates a new file
         with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
@@ -96,7 +100,7 @@ def make_target_copy(appInfo):
 
     except FileExistsError:
         backupout = "Backup already exists! Game might already be patched?"
-        print(backupout)
+        #print(backupout)
 
 
 def get_installed_games():
@@ -117,7 +121,7 @@ def patchGame(steam_app):
 def get_selected_game(appID):
     for game in steam_apps:
         if (appID == game["appID"]):
-            print(game)
+            #print(game)
             return game
 
 
@@ -131,7 +135,10 @@ def createGUI():
     global steam_apps
     sg.theme('DarkAmber')   # Add a touch of color
 
-    patch_list_dictionary = openJSON("games.json")
+    bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    path_to_help = os.path.abspath(os.path.join(bundle_dir,'games.json'))
+    patch_list_dictionary = openJSON(path_to_help)
+
     patch_list = list(patch_list_dictionary.keys())
     installed_games = []
     for game in steam_apps:
@@ -156,7 +163,7 @@ def createGUI():
               [sg.Text("", key="-OUTPUT-")]]
 
     # Create the Window
-    window = sg.Window('Ultrawider', layout)
+    window = sg.Window('Ultrawider', layout, icon=("./marthi.ico"))
     # Event Loop to process "events" and get the "values" of the inputs
     selected_game = []
     while True:
