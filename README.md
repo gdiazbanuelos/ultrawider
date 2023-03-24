@@ -5,3 +5,10 @@ MFW when a game doesn't have native ultrawide support:
 
 
 ![alt text](https://github.com/gdiazbanuelos/ultrawider/blob/main/marthi.png?raw=true)
+
+
+# Supported Games
+- Life is Strange
+- Hollow Knight
+- Death Stranding
+- Horizon Zero Dawn (soft of, no DLSS fix yet!)
