@@ -79,22 +79,26 @@ def make_target_copy(appInfo):
 
 
 def get_installed_games():
-    # windows_registry_steam_apps = get_windows_registry_steam_apps()
     steam_apps = get_steam_apps()
     for game in steam_apps:
         get_app_mainifest(game)
         print(game)
-
-        # if(game["appID"] in ("319630","367520","1190460")):
-        #     patcher.setGameEntry(game)
-        #     print(game)
-        #     make_target_copy(game)
-        #     offsets = patcher.getOffsets(game)
-        #     if(offsets != -1):
-        #         patcher.patchOffsets(offsets)
+        if(game["appID"] in ("319630","367520","1190460")):
+            #patchGame(game)
+            pass
+            
 
     print("Number of Steam Apps installed:", len(steam_apps))
     return steam_apps
+
+
+def patchGame(steam_app):
+    patcher.setGameEntry(steam_app)
+    #print(steam_app)
+    make_target_copy(steam_app)
+    offsets = patcher.getOffsets(steam_app)
+    if(offsets != -1):
+        patcher.patchOffsets(offsets)
 
 
 def createGUI(steam_apps):
@@ -125,7 +129,7 @@ def createGUI(steam_apps):
         if event == sg.WIN_CLOSED or event == 'Cancel':  # if user closes window or clicks cancel
             break
         if event == "-LIST-":
-            window['-CURRENTGAME-'].update(values['-LIST-'])
+            window['-CURRENTGAME-'].update(values['-LIST-'][0])
     window.close()
 
 
