@@ -13,12 +13,17 @@ import json
 # Example entry:
 # {'appID': '374320', 'library': 'D:\\SteamLibraryD', 'name': 'DARK SOULS III', 'path': WindowsPath('D:/SteamLibraryD/steamapps/common/DARK SOULS III')}
 steam_apps = None
+steam_path = None
+backupout = None
+
 
 def get_steam_apps():
+    global steam_path
     steam_path = ""
     if platform == "linux" or platform == "linux2":
-        steam_path = Path("/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
-        if(steam_path.exists()):
+        steam_path = Path(
+            "/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
+        if (steam_path.exists()):
             print("Found default Steam '{}' file!".format(steam_path.name))
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
@@ -26,8 +31,9 @@ def get_steam_apps():
         # OS X
         pass
     elif platform == "win32":
-        steam_path = Path('C:/Program Files (x86)/Steam/steamapps/libraryfolders.vdf')
-        if(steam_path.exists()):
+        steam_path = Path(
+            'C:/Program Files (x86)/Steam/steamapps/libraryfolders.vdf')
+        if (steam_path.exists()):
             print("Found default Steam '{}' file!".format(steam_path.name))
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
@@ -60,11 +66,11 @@ def get_steam_apps():
 
 
 def get_app_mainifest(steam_app):
-    path_to_game_manifest = Path(steam_app["library"] + \
-        "/steamapps/appmanifest_{}.acf".format(steam_app["appID"]))
+    path_to_game_manifest = Path(steam_app["library"] +
+                                 "/steamapps/appmanifest_{}.acf".format(steam_app["appID"]))
     game_manifest = vdf.parse(open(path_to_game_manifest))
-    path_to_game_files = Path(steam_app["library"] + \
-        "/steamapps/common/"+game_manifest["AppState"]["installdir"])
+    path_to_game_files = Path(steam_app["library"] +
+                              "/steamapps/common/"+game_manifest["AppState"]["installdir"])
     steam_app["name"] = game_manifest["AppState"]["name"]
     steam_app["name"] = re.sub(
         r'[^A-Za-z0-9`~!@#$%^&*()-_=+;:\'\"\,.<>/?\{\} ]+', '', steam_app["name"])
@@ -72,15 +78,18 @@ def get_app_mainifest(steam_app):
 
 
 def make_target_copy(appInfo):
+    global backupout
     try:
         os.makedirs(os.path.dirname(
             Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))))
         shutil.copy2(
             appInfo["path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
-        print("Made a backup of {} for {} in the backups folder!".format(
+        backupout = ("Made a backup of {} for {} in the backups folder!".format(
             appInfo["target_file"], appInfo["name"]))
+        print(backupout)
     except FileExistsError:
-        print("Backup already exists! Game might already be patched?")
+        backupout = "Backup already exists! Game might already be patched?"
+        print(backupout)
 
 
 def get_installed_games():
@@ -94,19 +103,18 @@ def patchGame(steam_app):
     patcher.setGameEntry(steam_app)
     make_target_copy(steam_app)
     offsets = patcher.getOffsets(steam_app)
-    if(offsets != -1):
+    if (offsets != -1):
         return patcher.patchOffsets(offsets)
 
 
 def get_selected_game(appID):
     for game in steam_apps:
-        if(appID == game["appID"]):
+        if (appID == game["appID"]):
             print(game)
             return game
 
 
-
-def openJSON(file_path):   
+def openJSON(file_path):
     with open(file_path, 'r') as f:
         data = json.load(f)
     return data
@@ -130,11 +138,14 @@ def createGUI():
                        size=20,
                        expand_x=True,
                        justification='center')],
+              [sg.Text("Default Steam install library path: " + str(steam_path))],
               [sg.Text('Number of patchable Steam Apps installed: ' +
                        str(len(installed_games)))],
               [sg.Listbox(values=installed_games, size=(100, 15),
                           enable_events=True, key='-LIST-')],
-              [sg.Text('Select a game to patch!', key='-CURRENTGAME-'), sg.Button("Patch!", key='CURRENTGAME')],
+              [sg.Text('Select a game to patch!', key='-CURRENTGAME-'),
+               sg.Button("Patch!", key='CURRENTGAME')],
+              [sg.Text("", key="-BACKUPOUTPUT-")],
               [sg.Text("", key="-OUTPUT-")]]
 
     # Create the Window
@@ -148,20 +159,24 @@ def createGUI():
         if event == "-LIST-":
             window['-CURRENTGAME-'].update(values['-LIST-'][0])
             selected_game = values['-LIST-']
+            window['-BACKUPOUTPUT-'].update("")
             window['-OUTPUT-'].update("")
         if event == "CURRENTGAME":
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, selected_game[0])[-1]
             app = get_selected_game(appID)
             if (patchGame(app)):
+                window['-BACKUPOUTPUT-'].update(backupout)
                 window['-OUTPUT-'].update("Patching successful")
             else:
-                window['-OUTPUT-'].update("Hex offset pattern not found. Game might already be patched")
+                window['-BACKUPOUTPUT-'].update(backupout)
+                window['-OUTPUT-'].update(
+                    "Hex offset pattern not found. Game might already be patched")
     window.close()
 
 
 def main():
-    global steam_apps 
+    global steam_apps
     steam_apps = get_installed_games()
     createGUI()
 

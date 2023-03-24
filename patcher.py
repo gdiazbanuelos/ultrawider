@@ -6,6 +6,8 @@ target_file = None
 search_pattern = None
 patch_pattern = None
 
+#TODO create dynamic patcher pattersn from json
+
 # patterns from cmd line are the positions
 # ie. search pattern n is in the nth position
 search_pattern_hex = [b"\x39\x8e\xe3\x3f",b"\x55\x55\x15\x40"]

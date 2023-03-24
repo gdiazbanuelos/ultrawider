@@ -18,7 +18,8 @@
         "local_path": "\\ds.exe",
         "target_file": "ds.exe",
         "search_pattern": "1",
-        "patch_pattern": "2"
+        "patch_pattern": "2",
+        "patterns": "[ [ '55 55 15 40' , '8E E3 18 40'] ]"
     },
     "1151640": {
         "name": "Horizon Zero Dawn",
@@ -26,6 +27,6 @@
         "target_file": "HorizonZeroDawn.exe",
         "search_pattern": "0",
         "patch_pattern": "2",
-        "other": "#TODO Needs a DLSS fix"
+        "patterns":"[ ['39 8E E3 3F', '8E E3 18 40'], ['40 38 B0 C1 00 00 00 74 12', '40 38 B0 C1 00 00 00 EB 12']]"
     }
 }
