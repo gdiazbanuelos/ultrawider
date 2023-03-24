@@ -69,7 +69,7 @@ def get_app_mainifest(steam_app):
 def make_target_copy(appInfo):
     try:
         os.makedirs(os.path.dirname(
-            "./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
+            Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))))
         shutil.copy2(
             appInfo["path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
         print("Made a backup of {} for {} in the backups folder!".format(
