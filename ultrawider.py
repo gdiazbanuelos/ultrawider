@@ -84,9 +84,16 @@ def make_target_copy(appInfo):
             Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))))
         shutil.copy2(
             appInfo["path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
-        backupout = ("Made a backup of {} for {} in the backups folder!".format(
+        backupout = ("Made a backup of '{}' for {} in the backups folder!".format(
             appInfo["target_file"], appInfo["name"]))
         print(backupout)
+        
+        # Creates a new file
+        with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
+            fp.write("This folder is a backup for the patched {} file".format(appInfo["name"]))
+
+
+
     except FileExistsError:
         backupout = "Backup already exists! Game might already be patched?"
         print(backupout)
@@ -171,7 +178,7 @@ def createGUI():
             else:
                 window['-BACKUPOUTPUT-'].update(backupout)
                 window['-OUTPUT-'].update(
-                    "Hex offset pattern not found. Game might already be patched")
+                    "Hex offset pattern not found! Game might already be patched?")
     window.close()
 
 
