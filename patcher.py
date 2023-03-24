@@ -1,5 +1,6 @@
 import subprocess
 import json
+from pathlib import Path
 
 target_file = None
 search_pattern = None
@@ -65,7 +66,7 @@ def openJSON(file_path):
 
 def setGameEntry(appInfo):
     data = openJSON("games.json")
-    appInfo["path"] = appInfo["path"] + data[appInfo["appID"]]["local_path"]
+    appInfo["path"] = Path(appInfo["path"] + data[appInfo["appID"]]["local_path"])
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
     appInfo["search_pattern"] = data[appInfo["appID"]]["search_pattern"]
     appInfo["patch_pattern"] = data[appInfo["appID"]]["patch_pattern"]
