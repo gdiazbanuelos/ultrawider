@@ -2,4 +2,6 @@
  Auto patcher for games to enjoy in ultrawide
 
 MFW when a game doesn't have native ultrawide support:
-![alt text](https://github.com/gdiazbanuelos/ultrawider/blob/main/marthi.ico?raw=true)
+
+
+![alt text](https://github.com/gdiazbanuelos/ultrawider/blob/main/marthi.png?raw=true)
