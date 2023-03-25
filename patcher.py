@@ -8,7 +8,7 @@ target_file = None
 search_pattern = None
 patch_pattern = None
 
-#TODO create dynamic patcher pattersn from json
+#TODO create dynamic patcher patterns from json
 
 # patterns from cmd line are the positions
 # ie. search pattern n is in the nth position
@@ -19,6 +19,8 @@ search_pattern_hex = [b"\x39\x8e\xe3\x3f",b"\x55\x55\x15\x40"]
 patch_pattern_hex = ["=0xCD,0x90,0x18,0x40", "=0x60,0xE5,0x18,0x40", "=0x8E,0xE3,0x18,0x40"]
 
 def getOffsets(appInfo):
+
+    #TODO dynamic parsing of JSON for patterns
     global target_file
     global search_pattern
     global patch_pattern
@@ -34,6 +36,9 @@ def getOffsets(appInfo):
 
     pattern = search_pattern_hex[int(search_pattern)]
     
+
+    print(appInfo["219_3440_1440_hex_pattern"])
+    sys.exit()
     offsets = []
     i = 0
     while True:
@@ -77,3 +82,4 @@ def setGameEntry(appInfo):
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
     appInfo["search_pattern"] = data[appInfo["appID"]]["search_pattern"]
     appInfo["patch_pattern"] = data[appInfo["appID"]]["patch_pattern"]
+    appInfo["219_3440_1440_hex_pattern"] = data[appInfo["appID"]]["219_3440_1440_hex_pattern"]
