@@ -87,7 +87,7 @@ def make_target_copy(appInfo):
         os.makedirs(os.path.dirname(
             Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))))
         shutil.copy2(
-            appInfo["path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
+            appInfo["absolute_path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
         backupout = ("Made a backup of '{}' for {} in the backups folder!".format(
             appInfo["target_file"], appInfo["name"]))
         #print(backupout)
