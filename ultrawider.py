@@ -15,7 +15,7 @@ import json
 steam_apps = None
 steam_path = None
 backupout = None
-
+restoreout = None
 
 def get_steam_apps():
     global steam_path
@@ -83,13 +83,14 @@ def get_app_mainifest(steam_app):
 
 def make_target_copy(appInfo):
     global backupout
+    backuppath = Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))
     try:
         os.makedirs(os.path.dirname(
-            Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))))
+            Path(backuppath)))
         shutil.copy2(
-            appInfo["absolute_path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
-        backupout = ("Made a backup of '{}' for {} in the backups folder!".format(
-            appInfo["target_file"], appInfo["name"]))
+            appInfo["absolute_path"], backuppath)
+        backupout = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
+            appInfo["target_file"], appInfo["name"], backuppath))
         # print(backupout)
 
         # Creates a new file
@@ -131,6 +132,22 @@ def openJSON(file_path):
     return data
 
 
+def restore_backup(steam_app):
+    global restoreout
+    backup_path = Path("./backups/{}/{}".format(steam_app["appID"], steam_app["target_file"]))
+    try:
+        shutil.copy2(
+            backup_path, steam_app["absolute_path"])
+        restoreout = ("Restored unpatched '{}' file for {} to:\n{}".format(
+            steam_app["target_file"], steam_app["name"], steam_app["absolute_path"]))
+        print(restoreout)
+
+    except FileNotFoundError:
+        restoreout = "No backup files exists for {} under \"{}\"!".format(steam_app["name"], backup_path)
+        print(restoreout)
+    
+
+
 def createGUI():
     global steam_apps
     sg.theme('DarkAmber')   # Add a touch of color
@@ -159,7 +176,7 @@ def createGUI():
               [sg.Listbox(values=installed_games, size=(100, 15),
                           enable_events=True, key='-LIST-')],
               [sg.Text('Select a game to patch!', key='-CURRENTGAME-'),
-               sg.Button("Patch!", key='CURRENTGAME')],
+               sg.Button("Patch!", key='CURRENTGAME'), sg.Button("Restore!", key='CURRENTGAMERESTORE')],
               [sg.Text("", key="-BACKUPOUTPUT-")],
               [sg.Text("", key="-OUTPUT-")]]
 
@@ -182,11 +199,21 @@ def createGUI():
             app = get_selected_game(appID)
             if (patchGame(app)):
                 window['-BACKUPOUTPUT-'].update(backupout)
-                window['-OUTPUT-'].update("Patching successful")
+                output = "Patching successful! Patched {} file for {} under:\n{}".format(app["target_file"], app["name"],app["absolute_path"])
+                window['-OUTPUT-'].update(output)
             else:
                 window['-BACKUPOUTPUT-'].update(backupout)
                 window['-OUTPUT-'].update(
                     "Hex offset pattern not found! Game might already be patched?")
+        if event == 'CURRENTGAMERESTORE':
+            pattern = r"\(([^()]+)\)[^()]*$"
+            appID = re.findall(pattern, selected_game[0])[-1]
+            app = get_selected_game(appID)
+            patcher.setGameEntry(app)
+            restore_backup(app)
+            window['-BACKUPOUTPUT-'].update(restoreout)
+            window['-OUTPUT-'].update("")
+
     window.close()
 
 
