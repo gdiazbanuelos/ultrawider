@@ -112,7 +112,7 @@ def get_installed_games():
 
 def patchGame(steam_app):
     patcher.setGameEntry(steam_app)
-    #make_target_copy(steam_app)
+    make_target_copy(steam_app)
 
     if(patcher.getOffsets(steam_app)):
         return patcher.patchOffsets(steam_app)

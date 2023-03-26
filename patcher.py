@@ -1,3 +1,4 @@
+import re
 import subprocess
 import json
 from pathlib import Path
@@ -81,21 +82,17 @@ def patchOffsets(appInfo):
 
     for offset in appInfo["patch_details"]:
         for x in offset[2]:
-            print(x,offset[1])
-
-    sys.exit()
-    for offset in appInfo["patch_details"]:
-        for x in offset[2]:
-            offset_patches.append(offset+patch_pattern_hex[int(patch_pattern)])
-
+            foo = re.sub(r'.{4}', '\\g<0>,', (offset[1].decode('ascii')).replace("\\x",'0x'))
+            bar = x+"="+foo[0:-1]
+            print(bar)
+            offset_patches.append(bar)
 
     bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     path_to_patcher_exe = os.path.abspath(os.path.join(bundle_dir,'hexalter.exe'))
 
-    print([str(path_to_patcher_exe)] + [appInfo['local_path']] + [offset_patches][0])
-    sys.exit()
+    print([str(path_to_patcher_exe)] + [appInfo['path']] + [offset_patches][0])
 
-    result = subprocess.run([str(path_to_help)] + [appInfo['local_path']] + [offset_patches][0], capture_output=True)
+    result = subprocess.run([str(path_to_patcher_exe)] + [appInfo['path']] + [offset_patches][0], capture_output=True)
     print(result.stdout.decode())
     return 1
 
