@@ -11,8 +11,6 @@
         "name": "Life is Strange: True Colors",
         "local_path": "/hollow_knight_Data/Managed/Assembly-CSharp.dll",
         "target_file": "Assembly-CSharp.dll",
-        "search_pattern": "0",
-        "patch_pattern": "1",
         "patterns": "[ ['3B 8E E3 3F', '8E E3 18 40']",
         "fov_pattern": "[ ['35 FA 0E 3C AC C5 27 37', '35 FA 3E 3C AC C5 27 37'] ]"
     },
@@ -20,8 +18,6 @@
         "name": "Hollow Knight",
         "local_path": "/hollow_knight_Data/Managed/Assembly-CSharp.dll",
         "target_file": "Assembly-CSharp.dll",
-        "search_pattern": "0",
-        "patch_pattern": "1",
         "219_3440_1440_hex_pattern": "[['39 8E E3 3F', '60 E5 18 40']]"
     },
     "1190460": {

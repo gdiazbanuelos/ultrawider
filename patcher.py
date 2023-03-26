@@ -6,37 +6,11 @@ import os
 import sys
 import ast
 
-target_file = None
-search_pattern = None
-patch_pattern = None
-
-#TODO create dynamic patcher patterns from json
-
-# patterns from cmd line are the positions
-# ie. search pattern n is in the nth position
-search_pattern_hex = [b"\x39\x8e\xe3\x3f",b"\x55\x55\x15\x40"]
-
-# patterns from cmd line are the positions
-# ie. patch pattern n is in the nth position
-patch_pattern_hex = ["=0xCD,0x90,0x18,0x40", "=0x60,0xE5,0x18,0x40", "=0x8E,0xE3,0x18,0x40"]
 
 def getOffsets(appInfo):
 
-    #TODO dynamic parsing of JSON for patterns
-    global target_file
-    global search_pattern
-    global patch_pattern
-
-    target_file = appInfo["path"]
-
-    #TODO create datebase to autoset these
-    search_pattern = appInfo["search_pattern"]
-    patch_pattern = appInfo["patch_pattern"]
-
-    with open(target_file, "rb") as f:
+    with open(appInfo["absolute_path"], "rb") as f:
         data = f.read()
-
-    patterns = search_pattern_hex[int(search_pattern)]
     
     test = appInfo["219_3440_1440_hex_pattern"]
     nested_list = ast.literal_eval(test)
@@ -47,13 +21,10 @@ def getOffsets(appInfo):
         foo = []
         for x in uw_patcher:
             hex_string = x.replace(" ", "").lower()
-            # convert the hex string to a hex literal string
             hex_literal_string = "".join([f"\\x{hex_string[i:i+2]}" for i in range(0, len(hex_string), 2)])
             hex_literal_string = bytes(hex_literal_string, "utf-8")
-            
             foo.append(hex_literal_string)
         bars.append(foo)
-    #print(bars)
     
     appInfo["patch_details"] = bars
 
@@ -88,15 +59,14 @@ def patchOffsets(appInfo):
         for x in offset[2]:
             foo = re.sub(r'.{4}', '\\g<0>,', (offset[1].decode('ascii')).replace("\\x",'0x'))
             bar = x+"="+foo[0:-1]
-            print(bar)
             offset_patches.append(bar)
 
     bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     path_to_patcher_exe = os.path.abspath(os.path.join(bundle_dir,'hexalter.exe'))
 
-    print([str(path_to_patcher_exe)] + [appInfo['path']] + [offset_patches][0])
+    #print([str(path_to_patcher_exe)] + [appInfo["absolute_path"]] + [offset_patches][0])
 
-    result = subprocess.run([str(path_to_patcher_exe)] + [appInfo['path']] + [offset_patches][0], capture_output=True)
+    result = subprocess.run([str(path_to_patcher_exe)] + [appInfo["absolute_path"]] + [offset_patches][0], capture_output=True)
     print(result.stdout.decode())
     return 1
 
@@ -111,8 +81,6 @@ def setGameEntry(appInfo):
     bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     path_to_help = os.path.abspath(os.path.join(bundle_dir,'games.json'))
     data = openJSON(path_to_help)
-    appInfo["path"] = Path(str(appInfo["path"]) + data[appInfo["appID"]]["local_path"])
+    appInfo["absolute_path"] = Path(str(appInfo["path"]) + data[appInfo["appID"]]["local_path"])
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
-    appInfo["search_pattern"] = data[appInfo["appID"]]["search_pattern"]
-    appInfo["patch_pattern"] = data[appInfo["appID"]]["patch_pattern"]
     appInfo["219_3440_1440_hex_pattern"] = data[appInfo["appID"]]["219_3440_1440_hex_pattern"]
