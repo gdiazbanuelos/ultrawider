@@ -12,7 +12,7 @@ def getOffsets(appInfo):
     with open(appInfo["absolute_path"], "rb") as f:
         data = f.read()
     
-    test = appInfo["219_3440_1440_hex_pattern"]
+    test = appInfo["3440_1440_hex__aspect_ratio_pattern"]
     nested_list = ast.literal_eval(test)
     two_d_array = [[str(val) for val in sublist] for sublist in nested_list]
 
@@ -83,4 +83,4 @@ def setGameEntry(appInfo):
     data = openJSON(path_to_help)
     appInfo["absolute_path"] = Path(str(appInfo["path"]) + data[appInfo["appID"]]["local_path"])
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
-    appInfo["219_3440_1440_hex_pattern"] = data[appInfo["appID"]]["219_3440_1440_hex_pattern"]
+    appInfo["3440_1440_hex__aspect_ratio_pattern"] = data[appInfo["appID"]]["3440_1440_hex__aspect_ratio_pattern"]

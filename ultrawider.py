@@ -90,17 +90,16 @@ def make_target_copy(appInfo):
             appInfo["absolute_path"], Path("./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"])))
         backupout = ("Made a backup of '{}' for {} in the backups folder!".format(
             appInfo["target_file"], appInfo["name"]))
-        #print(backupout)
-        
+        # print(backupout)
+
         # Creates a new file
         with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
-            fp.write("This folder is a backup for the patched {} file".format(appInfo["name"]))
-
-
+            fp.write("This folder is a backup for the patched {} file".format(
+                appInfo["name"]))
 
     except FileExistsError:
         backupout = "Backup already exists! Game might already be patched?"
-        #print(backupout)
+        # print(backupout)
 
 
 def get_installed_games():
@@ -112,21 +111,17 @@ def get_installed_games():
 
 def patchGame(steam_app):
     patcher.setGameEntry(steam_app)
-    if(patcher.getOffsets(steam_app)):
+    if (patcher.getOffsets(steam_app)):
         make_target_copy(steam_app)
         return patcher.patchOffsets(steam_app)
     else:
         print("Hex patterns not found! Game might already be patched?")
 
 
-    
-
-
-
 def get_selected_game(appID):
     for game in steam_apps:
         if (appID == game["appID"]):
-            #print(game)
+            # print(game)
             return game
 
 
@@ -140,8 +135,9 @@ def createGUI():
     global steam_apps
     sg.theme('DarkAmber')   # Add a touch of color
 
-    bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-    path_to_help = os.path.abspath(os.path.join(bundle_dir,'games.json'))
+    bundle_dir = getattr(
+        sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    path_to_help = os.path.abspath(os.path.join(bundle_dir, 'games.json'))
     patch_list_dictionary = openJSON(path_to_help)
 
     patch_list = list(patch_list_dictionary.keys())
