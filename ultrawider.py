@@ -112,11 +112,16 @@ def get_installed_games():
 
 def patchGame(steam_app):
     patcher.setGameEntry(steam_app)
-    make_target_copy(steam_app)
-
-    if(patcher.getOffsets(steam_app)):
+    
+    a = patcher.getOffsets(steam_app)
+    print(a)
+    
+    if(a):
+        make_target_copy(steam_app)
         return patcher.patchOffsets(steam_app)
-    pass
+    else:
+        print("Hex patterns not found! Game might already be patched?")
+
 
     
 

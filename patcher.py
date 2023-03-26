@@ -70,9 +70,13 @@ def getOffsets(appInfo):
         offsets.append(foo)
         x.append(foo)
         
+    y = 0
+    for x in offsets:
+        if(x == []):
+            y+=1
 
-    if len(offsets) == 0:
-        return -1
+    if (len(offsets) == y):
+        return 0
     else:
         return 1
 
