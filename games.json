@@ -4,7 +4,8 @@
         "local_path":"/Binaries/Win32/LifeIsStrange.exe",
         "target_file": "LifeIsStrange.exe",
         "search_pattern": "0",
-        "patch_pattern": "0"
+        "patch_pattern": "0",
+        "219_3440_1440_hex_pattern": "[['39 8E E3 3F', 'CD 90 18 40']]"
     },
     "936790":{
         "name": "Life is Strange: True Colors",
@@ -37,6 +38,6 @@
         "target_file": "HorizonZeroDawn.exe",
         "search_pattern": "0",
         "patch_pattern": "2",
-        "patterns":"[ ['39 8E E3 3F', '8E E3 18 40'], ['40 38 B0 C1 00 00 00 74 12', '40 38 B0 C1 00 00 00 EB 12']]"
+        "219_3440_1440_hex_pattern":"[ ['39 8E E3 3F', '8E E3 18 40'], ['40 38 B0 C1 00 00 00 74 12', '40 38 B0 C1 00 00 00 EB 12']]"
     }
 }

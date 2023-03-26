@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import os
 import sys
+import ast
 
 target_file = None
 search_pattern = None
@@ -34,37 +35,68 @@ def getOffsets(appInfo):
     with open(target_file, "rb") as f:
         data = f.read()
 
-    pattern = search_pattern_hex[int(search_pattern)]
+    patterns = search_pattern_hex[int(search_pattern)]
     
+    test = appInfo["219_3440_1440_hex_pattern"]
+    nested_list = ast.literal_eval(test)
+    two_d_array = [[str(val) for val in sublist] for sublist in nested_list]
 
-    print(appInfo["219_3440_1440_hex_pattern"])
-    sys.exit()
+    bars = []
+    for uw_patcher in two_d_array:
+        foo = []
+        for x in uw_patcher:
+            hex_string = x.replace(" ", "").lower()
+            # convert the hex string to a hex literal string
+            hex_literal_string = "".join([f"\\x{hex_string[i:i+2]}" for i in range(0, len(hex_string), 2)])
+            hex_literal_string = bytes(hex_literal_string, "utf-8")
+            
+            foo.append(hex_literal_string)
+        bars.append(foo)
+    #print(bars)
+    
+    appInfo["patch_details"] = bars
+
     offsets = []
-    i = 0
-    while True:
-        offset = data.find(pattern, i)
-        if offset == -1:
-            break
-        offsets.append(hex(offset))
-        i = offset + 1
+    for x in  appInfo["patch_details"]:
+        foo = []
+        i = 0
+        while True:
+            offset = data.find(x[0].decode('unicode-escape').encode('ISO-8859-1'), i)
+            if offset == -1:
+                break
+            foo.append(hex(offset))
+            i = offset + 1
+        offsets.append(foo)
+        x.append(foo)
+        
 
     if len(offsets) == 0:
         return -1
     else:
-        return offsets
+        return 1
 
 
-def patchOffsets(offsets):
+def patchOffsets(appInfo):
     offset_patches = []
-    for offset in offsets:
-        offset_patches.append(offset+patch_pattern_hex[int(patch_pattern)])
+
+    for offset in appInfo["patch_details"]:
+        for x in offset[2]:
+            print(x,offset[1])
+
+    sys.exit()
+    for offset in appInfo["patch_details"]:
+        for x in offset[2]:
+            offset_patches.append(offset+patch_pattern_hex[int(patch_pattern)])
 
 
     bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-    path_to_help = os.path.abspath(os.path.join(bundle_dir,'hexalter.exe'))
+    path_to_patcher_exe = os.path.abspath(os.path.join(bundle_dir,'hexalter.exe'))
 
-    result = subprocess.run([str(path_to_help)] + [target_file] + [offset_patches][0], capture_output=True)
-    #print(result.stdout.decode())
+    print([str(path_to_patcher_exe)] + [appInfo['local_path']] + [offset_patches][0])
+    sys.exit()
+
+    result = subprocess.run([str(path_to_help)] + [appInfo['local_path']] + [offset_patches][0], capture_output=True)
+    print(result.stdout.decode())
     return 1
 
 
