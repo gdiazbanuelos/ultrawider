@@ -26,6 +26,7 @@ def get_steam_apps():
             "/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
         if (steam_path.exists()):
             print("Found default Steam '{}' file!".format(steam_path.name))
+            sys.exit()
             pass
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
@@ -41,6 +42,7 @@ def get_steam_apps():
             pass
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
+            sys.exit()
             pass
 
     libraries = vdf.parse(open(steam_path))
@@ -93,16 +95,12 @@ def make_target_copy(appInfo):
             appInfo["absolute_path"], backuppath)
         backupout = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
             appInfo["target_file"], appInfo["name"], backuppath))
-        # print(backupout)
-
-        # Creates a new file
         with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
             fp.write("This folder is a backup for the patched {} file".format(
                 appInfo["name"]))
 
     except FileExistsError:
         backupout = "Backup already exists! Game might already be patched?"
-        # print(backupout)
 
 
 def get_installed_games():
@@ -119,6 +117,7 @@ def patchGame(steam_app):
         return patcher.patchOffsets(steam_app)
     else:
         print("Hex patterns not found! Game might already be patched?")
+        
 
 
 def get_selected_game(appID):
@@ -150,6 +149,7 @@ def restore_backup(steam_app):
             steam_app["name"], backup_path)
         print(restoreout)
 
+
 def createGUI():
     global steam_apps
     sg.theme('DarkAmber')   # Add a touch of color
@@ -172,13 +172,16 @@ def createGUI():
                        size=20,
                        expand_x=True,
                        justification='center')],
-              [sg.Text("Default Steam install library path: " + str(steam_path))],
+              [sg.Text("Steam Install Folder"), sg.In(
+                  size=(25, 1), enable_events=True, key="-STEAMINSTALL-", default_text=steam_path), sg.FileBrowse()],
               [sg.Text('Number of patchable Steam Apps installed: ' +
                        str(len(installed_games)))],
               [sg.Listbox(values=installed_games, size=(100, 15),
                           enable_events=True, key='-LIST-')],
-              [sg.Text('Select a game to patch!', key='-CURRENTGAME-'), sg.Button("Patch!", key='CURRENTGAME'), sg.Button("Patch FOV!", key='pf', visible=False)],
-              [sg.Text(text="Backup file found!", key="BACKUPTEXT", visible=False),sg.Button("Restore!", key='CURRENTGAMERESTORE', visible=False)],
+              [sg.Text('Select a game to patch!', key='-CURRENTGAME-'),
+               sg.Button("Patch!", key='CURRENTGAME'), sg.Button("Patch FOV!", key='PATCHFOV', visible=False)],
+              [sg.Text(text="Backup file found!", key="BACKUPTEXT", visible=False), sg.Button(
+                  "Restore!", key='CURRENTGAMERESTORE', visible=False)],
               [sg.Text("", key="-BACKUPOUTPUT-")],
               [sg.Text("", key="-OUTPUT-")]]
 
@@ -192,20 +195,19 @@ def createGUI():
             break
         if event == "-LIST-":
             window['-CURRENTGAME-'].update(values['-LIST-'][0])
-
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, values['-LIST-'][0])[-1]
             app = get_selected_game(appID)
             patcher.setGameEntry(app)
-            #print(app)
             if (app["3440_1440_hex_fov_pattern"] != None):
-                window['pf'].update(visible=True)
+                window['PATCHFOV'].update(visible=True)
             else:
-                window['pf'].update(visible=False)
-            
-            path = Path("./backups/{}/{}".format(app["appID"], app["target_file"]))
+                window['PATCHFOV'].update(visible=False)
+
+            path = Path(
+                "./backups/{}/{}".format(app["appID"], app["target_file"]))
             print(path)
-            if(path.is_file()):
+            if (path.is_file()):
                 window['BACKUPTEXT'].update(visible=True)
                 window['CURRENTGAMERESTORE'].update(visible=True)
             else:
@@ -214,7 +216,7 @@ def createGUI():
             selected_game = values['-LIST-']
             window['-BACKUPOUTPUT-'].update("")
             window['-OUTPUT-'].update("")
-            
+
         if event == "CURRENTGAME":
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, selected_game[0])[-1]

@@ -16,37 +16,37 @@ def getOffsets(appInfo):
     nested_list = ast.literal_eval(test)
     two_d_array = [[str(val) for val in sublist] for sublist in nested_list]
 
-    bars = []
+    patch_details = []
     for uw_patcher in two_d_array:
-        foo = []
+        patches = []
         for x in uw_patcher:
             hex_string = x.replace(" ", "").lower()
             hex_literal_string = "".join([f"\\x{hex_string[i:i+2]}" for i in range(0, len(hex_string), 2)])
             hex_literal_string = bytes(hex_literal_string, "utf-8")
-            foo.append(hex_literal_string)
-        bars.append(foo)
+            patches.append(hex_literal_string)
+        patch_details.append(patches)
     
-    appInfo["patch_details"] = bars
+    appInfo["patch_details"] = patch_details
 
     offsets = []
-    for x in  appInfo["patch_details"]:
-        foo = []
+    for x in appInfo["patch_details"]:
+        patch = []
         i = 0
         while True:
             offset = data.find(x[0].decode('unicode-escape').encode('ISO-8859-1'), i)
             if offset == -1:
                 break
-            foo.append(hex(offset))
+            patch.append(hex(offset))
             i = offset + 1
-        offsets.append(foo)
-        x.append(foo)
+        offsets.append(patch)
+        x.append(patch)
         
-    y = 0
-    for x in offsets:
-        if(x == []):
-            y+=1
+    empty_array_counter = 0
+    for array in offsets:
+        if(array == []):
+            empty_array_counter += 1
 
-    if (len(offsets) == y):
+    if (len(offsets) == empty_array_counter):
         return 0
     else:
         return 1
