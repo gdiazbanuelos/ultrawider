@@ -3,31 +3,31 @@
         "name": "Life is Strange",
         "local_path": "/Binaries/Win32/LifeIsStrange.exe",
         "target_file": "LifeIsStrange.exe",
-        "3440_1440_hex__aspect_ratio_pattern": "[['39 8E E3 3F', 'CD 90 18 40']]"
+        "3440_1440_hex_aspect_ratio_pattern": "[['39 8E E3 3F', 'CD 90 18 40']]"
     },
     "936790": {
         "name": "Life is Strange: True Colors",
         "local_path": "/Siren/Binaries/Win64/Siren-Win64-Shipping.exe",
         "target_file": "Siren-Win64-Shipping.exe",
-        "3440_1440_hex__aspect_ratio_pattern": "[['3B 8E E3 3F','8E E3 18 40']]",
+        "3440_1440_hex_aspect_ratio_pattern": "[['3B 8E E3 3F','8E E3 18 40']]",
         "3440_1440_hex_fov_pattern": "[['35 FA 0E 3C AC C5 27 37','35 FA 3E 3C AC C5 27 37']]"
     },
     "367520": {
         "name": "Hollow Knight",
         "local_path": "/hollow_knight_Data/Managed/Assembly-CSharp.dll",
         "target_file": "Assembly-CSharp.dll",
-        "3440_1440_hex__aspect_ratio_pattern": "[['39 8E E3 3F','60 E5 18 40']]"
+        "3440_1440_hex_aspect_ratio_pattern": "[['39 8E E3 3F','60 E5 18 40']]"
     },
     "1190460": {
         "name": "Death Stranding",
         "local_path": "/ds.exe",
         "target_file": "ds.exe",
-        "3440_1440_hex__aspect_ratio_pattern": "[['55 55 15 40','8E E3 18 40']]"
+        "3440_1440_hex_aspect_ratio_pattern": "[['55 55 15 40','8E E3 18 40']]"
     },
     "1151640": {
         "name": "Horizon Zero Dawn",
         "local_path": "/HorizonZeroDawn.exe",
         "target_file": "HorizonZeroDawn.exe",
-        "3440_1440_hex__aspect_ratio_pattern": "[['39 8E E3 3F','8E E3 18 40'],['40 38 B0 C1 00 00 00 74 12','40 38 B0 C1 00 00 00 EB 12']]"
+        "3440_1440_hex_aspect_ratio_pattern": "[['39 8E E3 3F','8E E3 18 40'],['40 38 B0 C1 00 00 00 74 12','40 38 B0 C1 00 00 00 EB 12']]"
     }
 }
