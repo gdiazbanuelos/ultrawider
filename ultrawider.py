@@ -26,8 +26,6 @@ def get_steam_apps():
             "/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
         if (steam_path.exists()):
             print("Found default Steam '{}' file!".format(steam_path.name))
-            sys.exit()
-            pass
         else:
             print("Failed to find default Steam '{}' file!".format(steam_path.name))
             pass
@@ -117,7 +115,7 @@ def patchGame(steam_app):
         return patcher.patchOffsets(steam_app)
     else:
         print("Hex patterns not found! Game might already be patched?")
-        
+        return 0
 
 
 def get_selected_game(appID):
@@ -172,7 +170,7 @@ def createGUI():
                        size=20,
                        expand_x=True,
                        justification='center')],
-              [sg.Text("Steam Install Folder"), sg.In(
+              [sg.Text("Steam Install Library File"), sg.In(
                   size=(25, 1), enable_events=True, key="-STEAMINSTALL-", default_text=steam_path), sg.FileBrowse()],
               [sg.Text('Number of patchable Steam Apps installed: ' +
                        str(len(installed_games)))],
@@ -194,6 +192,7 @@ def createGUI():
         if event == sg.WIN_CLOSED or event == 'Cancel':  # if user closes window or clicks cancel
             break
         if event == "-LIST-":
+            window['-BACKUPOUTPUT-'].update("")
             window['-CURRENTGAME-'].update(values['-LIST-'][0])
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, values['-LIST-'][0])[-1]
@@ -216,8 +215,8 @@ def createGUI():
             selected_game = values['-LIST-']
             window['-BACKUPOUTPUT-'].update("")
             window['-OUTPUT-'].update("")
-
         if event == "CURRENTGAME":
+            window['-BACKUPOUTPUT-'].update("")
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, selected_game[0])[-1]
             app = get_selected_game(appID)
@@ -226,8 +225,10 @@ def createGUI():
                 output = "Patching successful! Patched {} file for {} under:\n{}".format(
                     app["target_file"], app["name"], app["absolute_path"])
                 window['-OUTPUT-'].update(output)
+                window['BACKUPTEXT'].update(visible=True)
+                window['CURRENTGAMERESTORE'].update(visible=True)
             else:
-                window['-BACKUPOUTPUT-'].update(backupout)
+                window['-BACKUPOUTPUT-'].update("")
                 window['-OUTPUT-'].update(
                     "Hex offset pattern not found! Game might already be patched?")
         if event == 'CURRENTGAMERESTORE':
