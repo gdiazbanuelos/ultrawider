@@ -171,7 +171,7 @@ def createGUI():
                        expand_x=True,
                        justification='center')],
               [sg.Text("Steam Install Library File"), sg.In(
-                  size=(25, 1), enable_events=True, key="-STEAMINSTALL-", default_text=steam_path), sg.FileBrowse()],
+                  size=(len(str(steam_path)), 1), enable_events=True, key="-STEAMINSTALL-", default_text=steam_path), sg.FileBrowse(visible=False)],
               [sg.Text('Number of patchable Steam Apps installed: ' +
                        str(len(installed_games)))],
               [sg.Listbox(values=installed_games, size=(100, 15),
@@ -199,7 +199,8 @@ def createGUI():
             app = get_selected_game(appID)
             patcher.setGameEntry(app)
             if (app["3440_1440_hex_fov_pattern"] != None):
-                window['PATCHFOV'].update(visible=True)
+                #window['PATCHFOV'].update(visible=True)
+                pass
             else:
                 window['PATCHFOV'].update(visible=False)
 
