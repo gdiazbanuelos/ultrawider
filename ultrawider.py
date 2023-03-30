@@ -177,7 +177,7 @@ def createGUI():
               [sg.Listbox(values=installed_games, size=(100, 15),
                           enable_events=True, key='-LIST-')],
               [sg.Text('Select a game to patch!', key='-CURRENTGAME-'),
-               sg.Button("Patch!", key='CURRENTGAME'), sg.Button("Patch FOV!", key='PATCHFOV', visible=False)],
+               sg.Button("Patch!", key='CURRENTGAME', visible=False), sg.Button("Patch FOV!", key='PATCHFOV', visible=False)],
               [sg.Text(text="Backup file found!", key="BACKUPTEXT", visible=False), sg.Button(
                   "Restore!", key='CURRENTGAMERESTORE', visible=False)],
               [sg.Text("", key="-BACKUPOUTPUT-")],
@@ -194,6 +194,7 @@ def createGUI():
         if event == "-LIST-":
             window['-BACKUPOUTPUT-'].update("")
             window['-CURRENTGAME-'].update(values['-LIST-'][0])
+            window['CURRENTGAME'].update(visible=True)
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, values['-LIST-'][0])[-1]
             app = get_selected_game(appID)

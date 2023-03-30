@@ -4,8 +4,10 @@
 MFW a game doesn't have native ultrawide support
 
 
-![alt text](https://github.com/gdiazbanuelos/ultrawider/blob/main/marthi.png?raw=true)
+![alt text](marthi.png)
 
+# GUI
+![My Image](ultrawider.png)
 
 # Supported Games
 Game Name (Steam App ID)
