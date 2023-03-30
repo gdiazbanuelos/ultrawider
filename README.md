@@ -48,7 +48,7 @@ Game Name (Steam App ID)
 - To build on Windows: `python -m PyInstaller .\ultrawider.py --clean -F --add-data="games.json;." --add-data="hexalter.exe;." `
 - To build on Linux: `pyinstaller ultrawider.py --clean -F --add-data "games.json:." --add-data "hexalter.exe:."`
 - Or on Windows: `.\build.ps1`
-- Or on Linux: `./build.sh1`
+- Or on Linux: `./build.sh`
 - Alternatively only build `ultrawider.exe` on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` in the `./dest` folder
 <br/><br/>
 If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c`
