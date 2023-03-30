@@ -33,3 +33,20 @@ Game Name (Steam App ID)
 - Highlight already patched games in green
 - If default Steam location is not found, ability to manually select Steam install folder
 - Add JSON file to final build so that anyone can manually add games to patcher tool
+- Remove need of Wine for Linux build
+
+# Building Ultrawider
+- Install Python
+- Install Pip3 packages: `pip3 install vdf pysimplegui pyinstaller`
+- Or run `pip3 install -r requirements.txt`
+<br/><br/>
+- To build on Windows: `python -m PyInstaller .\ultrawider.py --clean -F --add-data="games.json;." --add-data="hexalter.exe;." `
+- To build on Linux: `pyinstaller ultrawider.py --clean -F --add-data "games.json:." --add-data "hexalter.exe:."`
+- Or on Windows: `.\build.ps1`
+- Or on Linux: `./build.sh1`
+- Alternatively only build `ultrawider.exe` on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` in the `./dest` folder
+<br/><br/>
+If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c`
+
+# Linux Users
+Wine must be installed due to hexalter.exe as the patcher for the files. A future update will remove this Wine dependency. 
