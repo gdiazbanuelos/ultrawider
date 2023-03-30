@@ -30,7 +30,7 @@ Game Name (Steam App ID)
 # Install
 - Download latest release: https://github.com/gdiazbanuelos/ultrawider/releases
 - Windows file: `ultrawider.exe`
-- Linux file: `ultrawider`
+- Linux file: `ultrawider` (Wine must be installed! Future plans to remove this dependency)
 
 # Future updates
 - Patch FOV values
@@ -52,6 +52,3 @@ Game Name (Steam App ID)
 - Alternatively only build `ultrawider.exe` on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` in the `./dest` folder
 <br/><br/>
 If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c`
-
-# Linux Users
-Wine must be installed due to hexalter.exe as the patcher for the files. A future update will remove this Wine dependency. 
