@@ -9,6 +9,13 @@ MFW a game doesn't have native ultrawide support
 # GUI
 ![My Image](ultrawider3.png)
 
+How it works:
+
+- To patch in another aspect ratio, we must change the hex patterns at certain offsets for a game's files
+- Before patching the files, we make a backups under ./backups/{apppID}/{patched_file}
+- Then the program patches the files at the game's install location
+- The restore button shows up once the backup is made, allowing for easy undoing of the patch
+
 # Supported Games
 Game Name (Steam App ID)
 <br/>*App ID's can be found in the url of a game's Steam store page*
@@ -18,3 +25,10 @@ Game Name (Steam App ID)
 - Life is Strange (319630)
 - Life is Strange: True Colors (936790)
 - Death Stranding (1190460)
+
+# Future updates
+- Patch FOV values
+- Added ability to patch other aspect ratios (32:9, 16:10, other 21:9 non 3400x1440 resolutions)
+- Highlight already patched games in green
+- If default Steam location is not found, ability to manually select Steam install folder
+- Add JSON file to final build so that anyone can manually add games to patcher tool
