@@ -27,6 +27,11 @@ Game Name (Steam App ID)
 - Life is Strange: True Colors (936790)
 - Death Stranding (1190460)
 
+# Install
+- Download latest release: https://github.com/gdiazbanuelos/ultrawider/releases
+- Windows file: `ultrawider.exe`
+- Linux file: `ultrawider`
+
 # Future updates
 - Patch FOV values
 - Added ability to patch other aspect ratios (32:9, 16:10, other 21:9 non 3400x1440 resolutions)
