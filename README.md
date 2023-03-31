@@ -4,15 +4,16 @@
 MFW a game doesn't have native ultrawide support
 
 
-![alt text](marthi.png)
+![alt text](images/marthi.png)
 
 # GUI
-![My Image](ultrawider3.png)
+![My Image](images/ultrawidergui.png)
 
 How it works:
 
 - To patch in another aspect ratio, we must change the hex patterns at certain offsets for a game's files
 - We do this with hexalter.c which takes offset locations (ie. 0x3f) for an input file (ie. game.exe) and overrides the offset with the patch (ie 0x18), patching in the aspect ratio
+- Steam keeps a manifest of all isntalled games. This program reads the manifest library folder and each individual manifest to determine where all games installed
 - Before patching the files, we make a backup under ./backups/{apppID}/{patched_file}
 - Then the program patches the files at the game's install location
 - The restore button shows up once the backup is made, allowing for easy undoing of the patch

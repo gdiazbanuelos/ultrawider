@@ -184,7 +184,7 @@ def createGUI():
               [sg.Text("", key="-OUTPUT-")]]
 
     # Create the Window
-    window = sg.Window('Ultrawider', layout, icon=("./marthi.ico"))
+    window = sg.Window('Ultrawider', layout, icon=("../images/marthi.ico"))
     # Event Loop to process "events" and get the "values" of the inputs
     selected_game = []
     while True:

@@ -1,1 +1,1 @@
-python -m PyInstaller .\ultrawider.py --clean -F --add-data="games.json;." --add-data="hexalter.exe;." 
+python -m PyInstaller ".\src\ultrawider.py" --clean -F --add-data=".\src\games.json;." --add-data=".\src\hexalter.exe;." 
