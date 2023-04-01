@@ -2,10 +2,10 @@ import vdf
 import patcher
 import shutil
 import sys
+from sys import platform
 import os
 import PySimpleGUI as sg
 import re
-from sys import platform
 from pathlib import Path
 import json
 
