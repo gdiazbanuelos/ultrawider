@@ -93,6 +93,11 @@ def guiLoop():
         event, values = window.read()            
         if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
             break
+        if event == '-LIST-':
+            pattern = r"\(([^()]+)\)[^()]*$"
+            appID = re.findall(pattern, values['-LIST-'][0][0])[0]
+            app = get_selected_game(appID)
+            print(app)
         if event == '-STEAM_LIB_FILEPATH-':
             window['-OUTPUT_BOX-'].update('')
             steam_lib_filepath = Path(values['-STEAM_LIB_FILEPATH-'])
@@ -158,10 +163,8 @@ def get_app_mainifests():
                 r'[^A-Za-z0-9`~!@#$%^&*()-_=+;:\'\"\,.<>/?\{\} ]+', '', app["name"])
             app["path"] = path_to_game_files
         except:
-            print("game manifest not found for {}".format(app['appID']))
+            print("Game manifest not found for {}, game was probably uninstalled?".format(app['appID']))
             steam_apps.remove(app)
-    
-    print("FINAL INSTALL COUNT: ", len(steam_apps))
 
 
 def filter_apps():
@@ -183,6 +186,14 @@ def openJSON(file_path):
     with open(file_path, 'r') as f:
         data = json.load(f)
     return data
+
+
+def get_selected_game(appID):
+    for game in steam_apps:
+        if (appID == game["appID"]):
+            return game
+
+
 
 
 def main():
