@@ -13,6 +13,7 @@ steam_libraries = None
 steam_paths = None
 steam_apps = None
 filtered_apps = None
+current_game = None
 
 window = None
 
@@ -67,6 +68,8 @@ def createGUI():
                change_submits=True, enable_events=True), sg.FileBrowse()],
         [sg.T("")],
         [sg.Listbox(values=[], size=(100, 15), enable_events=True, key='-LIST-', visible=False)],
+        [sg.T("", key='-CURRENT_GAME-')],
+        [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
         [sg.T(key='-OUTPUT_BOX-', font=(15))]
     ]
 
@@ -96,8 +99,15 @@ def guiLoop():
         if event == '-LIST-':
             pattern = r"\(([^()]+)\)[^()]*$"
             appID = re.findall(pattern, values['-LIST-'][0][0])[0]
-            app = get_selected_game(appID)
-            print(app)
+            current_game = get_selected_game(appID)
+            window['-CURRENT_GAME-'].update("{} ({}):\n'{}'".format(current_game['name'], 
+                                                                   current_game['appID'],
+                                                                   current_game['path']),
+                                                                   font=(15))
+            window['Patch'].update(visible=True)
+            # TODO if backup if found, show restore button
+            # window['Restore'].update(visible=True)
+
         if event == '-STEAM_LIB_FILEPATH-':
             window['-OUTPUT_BOX-'].update('')
             steam_lib_filepath = Path(values['-STEAM_LIB_FILEPATH-'])
@@ -110,7 +120,7 @@ def get_steam_apps():
     global steam_paths
     global steam_apps
 
-    window['-OUTPUT_BOX-'].update("Finding your installed games!", background_color=('#2C2825'), text_color=('#FDCB52'))
+    window['-OUTPUT_BOX-'].update("", background_color=('#2C2825'), text_color=('#FDCB52'))
 
     steam_paths = []
     steam_apps = []
@@ -192,8 +202,6 @@ def get_selected_game(appID):
     for game in steam_apps:
         if (appID == game["appID"]):
             return game
-
-
 
 
 def main():
