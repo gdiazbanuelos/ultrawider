@@ -5,12 +5,14 @@ import sys
 from sys import platform
 from pathlib import Path
 import re
+import json
 
 steam_lib_filepath = None
 steam_libraries = None
 
 steam_paths = None
 steam_apps = None
+filtered_apps = None
 
 window = None
 
@@ -63,6 +65,8 @@ def createGUI():
         [sg.Text("Steam Library File", font=(15)),
          sg.In(key="-STEAM_LIB_FILEPATH-", default_text=steam_lib_filepath,size=(55, 1), font=(15),
                change_submits=True, enable_events=True), sg.FileBrowse()],
+        [sg.T("")],
+        [sg.Listbox(values=[], size=(100, 15), enable_events=True, key='-LIST-', visible=False)],
         [sg.T(key='-OUTPUT_BOX-', font=(15))]
     ]
 
@@ -76,6 +80,10 @@ def guiLoop():
 
     if(steam_lib_filepath != None):
         get_steam_apps()
+        get_app_mainifests()
+        filter_apps()
+        print(filtered_apps)
+        window['-LIST-'].update(values=[filtered_apps], visible=True)
     else:
         window['-OUTPUT_BOX-'].update("Error! Find the \"libraryfolders.vdf\" file under <path_to_steam>/Steam/steamapps/", 
         background_color="red", text_color="white")
@@ -105,30 +113,21 @@ def get_steam_apps():
         path = steam_libraries[library]['path']
         steam_paths.append(path)
         for appID in steam_libraries[library]['apps']:
-            steam_apps.append({
-                "appID": appID,
-                "library": path
-            })
-    
+            steam_apps.append({"appID": appID, "library": path})
+
 
     # Manually search all appmanifest_xxx.acf files at each Steam library location
     # for some reason, not all installed games are written to libraryfolders.vdf
     for library in steam_libraries:
-        steam_lib_path = steam_libraries[library]["path"]
-        manifest_path = Path(steam_lib_path + "/steamapps")
+        path = steam_libraries[library]["path"]
+        manifest_path = Path(path + "/steamapps")
         directory_list = os.listdir(manifest_path)
         for files in directory_list:
             if (re.match("^appmanifest_.*\.acf$", files)):
-                gameID = re.sub("appmanifest_|\.acf", "", files)
-                gameEntry = {"appID": gameID, "library": steam_lib_path}
-                if gameEntry not in steam_apps:
-                    steam_apps.append(gameEntry)
-
-
-    print(steam_paths)
-
-    for app in steam_apps:
-        print(app)
+                appID = re.sub("appmanifest_|\.acf", "", files)
+                app = {"appID": appID, "library": path}
+                if app not in steam_apps:
+                    steam_apps.append(app)
 
 
 def open_VDF():
@@ -146,9 +145,46 @@ def open_VDF():
         return 0
 
 
+def get_app_mainifests():
+    for app in steam_apps:
+        path_to_game_manifest = Path(app["library"] +
+                                 "/steamapps/appmanifest_{}.acf".format(app["appID"]))
+        game_manifest = vdf.parse(open(path_to_game_manifest))
+        path_to_game_files = Path(app["library"] +
+                                "/steamapps/common/"+game_manifest["AppState"]["installdir"])
+        app["name"] = game_manifest["AppState"]["name"]
+        app["name"] = re.sub(
+            r'[^A-Za-z0-9`~!@#$%^&*()-_=+;:\'\"\,.<>/?\{\} ]+', '', app["name"])
+        app["path"] = path_to_game_files
+
+
+def filter_apps():
+    global filtered_apps
+
+    bundle_dir = getattr(
+        sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    path_to_help = os.path.abspath(os.path.join(bundle_dir, 'games.json'))
+    patch_list_dictionary = openJSON(path_to_help)
+
+    patch_list = list(patch_list_dictionary.keys())
+    filtered_apps = []
+    for game in steam_apps:
+        if game["appID"] in patch_list:
+            filtered_apps.append("{}  ({})".format(game["name"], game["appID"]))
+
+
+def openJSON(file_path):   
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data
+
+
 def main():
+    # Find default Steam libraryfolder.vdf file and attempt to open it
     get_steam_lib_filepath()
     open_VDF()
+
+    # Start GUI loop, if VDF not found, ask until valid VDF fed in
     createGUI()
     guiLoop()
 
