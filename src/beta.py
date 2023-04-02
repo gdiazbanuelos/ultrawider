@@ -19,11 +19,10 @@ def get_steam_library_filepath():
     global steam_library_filepath
     global steam_libraries
 
-
     # Try default Steam install location
     if platform == "linux" or platform == "linux2":
         steam_library_filepath = Path(
-            "f/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
+            "/home/{}/.local/share/Steam/steamapps/libraryfolders.vdf".format(os.getlogin()))
         if (steam_library_filepath.exists()):
             print("Found default Steam '{}' file!".format(steam_library_filepath.name))
         else:
