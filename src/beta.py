@@ -159,6 +159,9 @@ def get_app_mainifests():
             app["path"] = path_to_game_files
         except:
             print("game manifest not found for {}".format(app['appID']))
+            steam_apps.remove(app)
+    
+    print("FINAL INSTALL COUNT: ", len(steam_apps))
 
 
 def filter_apps():
