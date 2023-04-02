@@ -39,7 +39,7 @@ def get_steam_lib_filepath():
         pass
     elif platform == "win32":
         steam_lib_filepath = Path(
-            'C:/Program Files (x86)/Steam/steamapps/libfolders.vdf')
+            'C:/Program Files (x86)/Steam/steamapps/libraryfolders.vdf')
         if (steam_lib_filepath.exists()):
             print("Found default Steam '{}' file!".format(steam_lib_filepath.name))
         else:
@@ -104,8 +104,11 @@ def get_steam_apps():
     for library in steam_libraries:
         path = steam_libraries[library]['path']
         steam_paths.append(path)
-        for app in steam_libraries[library]['apps']:
-            steam_apps.append(app)
+        for appID in steam_libraries[library]['apps']:
+            steam_apps.append({
+                "appID": appID,
+                "library": path
+            })
     
 
     # Manually search all appmanifest_xxx.acf files at each Steam library location
@@ -123,8 +126,9 @@ def get_steam_apps():
 
 
     print(steam_paths)
-    print(steam_apps)
 
+    for app in steam_apps:
+        print(app)
 
 
 def open_VDF():
