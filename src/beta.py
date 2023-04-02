@@ -147,15 +147,18 @@ def open_VDF():
 
 def get_app_mainifests():
     for app in steam_apps:
-        path_to_game_manifest = Path(app["library"] +
-                                 "/steamapps/appmanifest_{}.acf".format(app["appID"]))
-        game_manifest = vdf.parse(open(path_to_game_manifest))
-        path_to_game_files = Path(app["library"] +
-                                "/steamapps/common/"+game_manifest["AppState"]["installdir"])
-        app["name"] = game_manifest["AppState"]["name"]
-        app["name"] = re.sub(
-            r'[^A-Za-z0-9`~!@#$%^&*()-_=+;:\'\"\,.<>/?\{\} ]+', '', app["name"])
-        app["path"] = path_to_game_files
+        try:
+            path_to_game_manifest = Path(app["library"] +
+                                    "/steamapps/appmanifest_{}.acf".format(app["appID"]))
+            game_manifest = vdf.parse(open(path_to_game_manifest))
+            path_to_game_files = Path(app["library"] +
+                                    "/steamapps/common/"+game_manifest["AppState"]["installdir"])
+            app["name"] = game_manifest["AppState"]["name"]
+            app["name"] = re.sub(
+                r'[^A-Za-z0-9`~!@#$%^&*()-_=+;:\'\"\,.<>/?\{\} ]+', '', app["name"])
+            app["path"] = path_to_game_files
+        except:
+            print("game manifest not found for {}".format(app['appID']))
 
 
 def filter_apps():
