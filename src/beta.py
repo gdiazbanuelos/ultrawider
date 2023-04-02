@@ -109,11 +109,23 @@ def guiLoop():
             # window['Restore'].update(visible=True)
 
         if event == '-STEAM_LIB_FILEPATH-':
-            window['-OUTPUT_BOX-'].update('')
-            steam_lib_filepath = Path(values['-STEAM_LIB_FILEPATH-'])
-            if(open_VDF()):
-                get_steam_apps()
+            resetGUI(values)       
+
     window.close()
+
+
+def resetGUI(values):
+    global steam_lib_filepath
+    window['-OUTPUT_BOX-'].update('')
+    window['-CURRENT_GAME-'].update('')
+    window['Patch'].update(visible=False)
+    window['-LIST-'].update(values=[])
+    steam_lib_filepath = Path(values['-STEAM_LIB_FILEPATH-'])
+    if(open_VDF()):
+        get_steam_apps()
+        get_app_mainifests()
+        filter_apps()
+        window['-LIST-'].update(values=[filtered_apps], visible=True)
 
 
 def get_steam_apps():
