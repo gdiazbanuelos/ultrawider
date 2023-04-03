@@ -104,16 +104,34 @@ def guiLoop():
             select_Game_GUI(values)
         if event == 'Patch':
             patch_game()
+        if event == 'Restore':
+            restore_backup(current_game)
         if event == '-STEAM_LIB_FILEPATH-':
             resetGUI(values)
     window.close()
 
 
+def restore_backup(steam_app):
+    
+    backup_path = Path(
+        "./backups/{}/{}".format(steam_app["appID"], steam_app["target_file"]))
+    try:
+        shutil.copy2(
+            backup_path, steam_app["target_file_path"])
+
+    except FileNotFoundError:
+        pass
+
+
 def patch_game():
-    setGameEntry(current_game)
     if(getOffsets(current_game)):
         print(current_game['patch_details'])
         make_target_copy(current_game)
+    
+        #TODO add patching code
+
+        
+        window['Restore'].update(visible=True)
     else:
         print("Offsets not found!")
 
@@ -130,7 +148,7 @@ def make_target_copy(appInfo):
         #backupout = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
             #appInfo["target_file"], appInfo["name"], backuppath))
         with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
-            fp.write("This folder has the original backup for the patched '{}' file for {}".format(
+            fp.write("This folder has the original backup of '{}' file for {}".format(
                 appInfo['target_file'], appInfo["name"]))
 
     except FileExistsError:
@@ -207,8 +225,13 @@ def select_Game_GUI(values):
                                                                    current_game['install_path']),
                                                                    font=(15))
     window['Patch'].update(visible=True)
-    # TODO if backup if found, show restore button
-    # window['Restore'].update(visible=True)
+
+    setGameEntry(current_game)
+    backup_path = Path("./backups/{}/{}".format(current_game["appID"], current_game["target_file"]))
+    if (backup_path.is_file()):
+        window['Restore'].update(visible=True)
+    else:
+        window['Restore'].update(visible=False)
 
 
 def resetGUI(values):
