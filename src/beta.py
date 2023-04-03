@@ -6,6 +6,8 @@ from sys import platform
 from pathlib import Path
 import re
 import json
+import ast
+import shutil
 
 steam_lib_filepath = None
 steam_libraries = None
@@ -109,7 +111,30 @@ def guiLoop():
 
 def patch_game():
     setGameEntry(current_game)
-    print(current_game)
+    if(getOffsets(current_game)):
+        print(current_game['patch_details'])
+        make_target_copy(current_game)
+    else:
+        print("Offsets not found!")
+
+
+def make_target_copy(appInfo):
+    #global backupout
+    backuppath = Path(
+        "./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))
+    try:
+        os.makedirs(os.path.dirname(
+            Path(backuppath)))
+        shutil.copy2(
+            appInfo["target_file_path"], backuppath)
+        #backupout = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
+            #appInfo["target_file"], appInfo["name"], backuppath))
+        with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
+            fp.write("This folder has the original backup for the patched '{}' file for {}".format(
+                appInfo['target_file'], appInfo["name"]))
+
+    except FileExistsError:
+        backupout = "Backup already exists! Game might already be patched?"
 
 
 def setGameEntry(appInfo):
@@ -124,6 +149,50 @@ def setGameEntry(appInfo):
     except KeyError:
         appInfo["3440_1440_hex_fov_pattern"] = None
 
+
+def getOffsets(appInfo):
+
+    with open(appInfo["target_file_path"], "rb") as f:
+        data = f.read()
+    
+    test = appInfo["3440_1440_hex_aspect_ratio_pattern"]
+    nested_list = ast.literal_eval(test)
+    two_d_array = [[str(val) for val in sublist] for sublist in nested_list]
+
+    patch_details = []
+    for uw_patcher in two_d_array:
+        patches = []
+        for x in uw_patcher:
+            hex_string = x.replace(" ", "").lower()
+            hex_literal_string = "".join([f"\\x{hex_string[i:i+2]}" for i in range(0, len(hex_string), 2)])
+            hex_literal_string = bytes(hex_literal_string, "utf-8")
+            patches.append(hex_literal_string)
+        patch_details.append(patches)
+    
+    appInfo["patch_details"] = patch_details
+
+    offsets = []
+    for x in appInfo["patch_details"]:
+        patch = []
+        i = 0
+        while True:
+            offset = data.find(x[0].decode('unicode-escape').encode('ISO-8859-1'), i)
+            if offset == -1:
+                break
+            patch.append(hex(offset))
+            i = offset + 1
+        offsets.append(patch)
+        x.append(patch)
+        
+    empty_array_counter = 0
+    for array in offsets:
+        if(array == []):
+            empty_array_counter += 1
+
+    if (len(offsets) == empty_array_counter):
+        return 0
+    else:
+        return 1
 
 
 
