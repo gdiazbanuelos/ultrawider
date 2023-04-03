@@ -10,11 +10,14 @@ import json
 steam_lib_filepath = None
 steam_libraries = None
 
+# This the order that the values are set when the program is launched
 steam_paths = None
 steam_apps = None
 filtered_apps = None
 current_game = None
 
+
+# PySimpleGui window class
 window = None
 
 
@@ -85,7 +88,6 @@ def guiLoop():
         get_steam_apps()
         get_app_mainifests()
         filter_apps()
-        print(filtered_apps)
         window['-LIST-'].update(values=[filtered_apps], visible=True)
     else:
         window['-OUTPUT_BOX-'].update("Error! Find the \"libraryfolders.vdf\" file under <path_to_steam>/Steam/steamapps/", 
@@ -97,21 +99,47 @@ def guiLoop():
         if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
             break
         if event == '-LIST-':
-            pattern = r"\(([^()]+)\)[^()]*$"
-            appID = re.findall(pattern, values['-LIST-'][0][0])[0]
-            current_game = get_selected_game(appID)
-            window['-CURRENT_GAME-'].update("{} ({}):\n'{}'".format(current_game['name'], 
-                                                                   current_game['appID'],
-                                                                   current_game['path']),
-                                                                   font=(15))
-            window['Patch'].update(visible=True)
-            # TODO if backup if found, show restore button
-            # window['Restore'].update(visible=True)
-
+            select_Game_GUI(values)
+        if event == 'Patch':
+            patch_game()
         if event == '-STEAM_LIB_FILEPATH-':
-            resetGUI(values)       
-
+            resetGUI(values)
     window.close()
+
+
+def patch_game():
+    setGameEntry(current_game)
+    print(current_game)
+
+
+def setGameEntry(appInfo):
+    bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    path_to_help = os.path.abspath(os.path.join(bundle_dir,'games.json'))
+    data = openJSON(path_to_help)
+    appInfo["target_file_path"] = Path(str(appInfo["install_path"]) + data[appInfo["appID"]]["local_path"])
+    appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
+    appInfo["3440_1440_hex_aspect_ratio_pattern"] = data[appInfo["appID"]]["3440_1440_hex_aspect_ratio_pattern"]
+    try:
+        appInfo["3440_1440_hex_fov_pattern"] = data[appInfo["appID"]]["3440_1440_hex_fov_pattern"]
+    except KeyError:
+        appInfo["3440_1440_hex_fov_pattern"] = None
+
+
+
+
+def select_Game_GUI(values):
+    global current_game
+
+    pattern = r"\(([^()]+)\)[^()]*$"
+    appID = re.findall(pattern, values['-LIST-'][0][0])[0]
+    current_game = get_selected_game(appID)
+    window['-CURRENT_GAME-'].update("{} ({}):\n'{}'".format(current_game['name'], 
+                                                                   current_game['appID'],
+                                                                   current_game['install_path']),
+                                                                   font=(15))
+    window['Patch'].update(visible=True)
+    # TODO if backup if found, show restore button
+    # window['Restore'].update(visible=True)
 
 
 def resetGUI(values):
@@ -183,7 +211,7 @@ def get_app_mainifests():
             app["name"] = game_manifest["AppState"]["name"]
             app["name"] = re.sub(
                 r'[^A-Za-z0-9`~!@#$%^&*()-_=+;:\'\"\,.<>/?\{\} ]+', '', app["name"])
-            app["path"] = path_to_game_files
+            app["install_path"] = path_to_game_files
         except:
             print("Game manifest not found for {}, game was probably uninstalled?".format(app['appID']))
             steam_apps.remove(app)
