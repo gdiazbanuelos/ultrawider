@@ -22,6 +22,8 @@ current_game = None
 # PySimpleGui window class
 window = None
 
+aspect_ratio_list = ['21:9 (3440x1440)', '21:9 (2560x1080)','21:9 (3840x1600)']
+selected_aspect_ratio = aspect_ratio_list[0]
 
 # Find all installed Steam Games
 #   Find libfolders.vdf, search default location for OS
@@ -62,6 +64,7 @@ def createGUI():
 
     sg.theme('DarkAmber')   # Add a touch of color
     # All the stuff inside your window.
+
     layout = [
         [sg.T('Ultrawider',
               font=('Arial Bold', 25),
@@ -71,6 +74,10 @@ def createGUI():
         [sg.Text("Steam Library File", font=(15)),
          sg.In(key="-STEAM_LIB_FILEPATH-", default_text=steam_lib_filepath,size=(55, 1), font=(15),
                change_submits=True, enable_events=True), sg.FileBrowse()],
+        [sg.T("")],
+        [sg.T("Aspect Ratio", font=(30)), sg.Combo(aspect_ratio_list, key='-ASPECT_RATIO-', 
+                                                   default_value=aspect_ratio_list[0], 
+                                                   size=(30), readonly=True, enable_events=True)],
         [sg.T("")],
         [sg.Listbox(values=[], size=(100, 15), enable_events=True, key='-LIST-', visible=False)],
         [sg.T("", key='-CURRENT_GAME-')],
@@ -85,6 +92,7 @@ def createGUI():
 def guiLoop():
     global window
     global steam_lib_filepath
+    global selected_aspect_ratio
 
     if(steam_lib_filepath != None):
         get_steam_apps()
@@ -106,9 +114,16 @@ def guiLoop():
             patch_game()
         if event == 'Restore':
             restore_backup(current_game)
+        if event == '-ASPECT_RATIO-':
+            change_selected_aspect_ratio(values)
         if event == '-STEAM_LIB_FILEPATH-':
             resetGUI(values)
     window.close()
+
+
+def change_selected_aspect_ratio(values):
+    global selected_aspect_ratio
+    selected_aspect_ratio = values['-ASPECT_RATIO-']
 
 
 def restore_backup(steam_app):
