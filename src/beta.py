@@ -81,6 +81,7 @@ def createGUI():
         [sg.T("")],
         [sg.Listbox(values=[], size=(100, 15), enable_events=True, key='-LIST-', visible=False)],
         [sg.T("", key='-CURRENT_GAME-')],
+        [sg.T("", key='-DESCRIPTION-', font=(15))],
         [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
         [sg.T(key='-OUTPUT_BOX-', font=(15))]
     ]
@@ -176,7 +177,8 @@ def setGameEntry(appInfo):
     data = openJSON(path_to_help)
     appInfo["target_file_path"] = Path(str(appInfo["install_path"]) + data[appInfo["appID"]]["local_path"])
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
-    appInfo["3440_1440_hex_aspect_ratio_pattern"] = data[appInfo["appID"]]["3440_1440_hex_aspect_ratio_pattern"]
+    appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
+    appInfo["description"] = data[appInfo["appID"]]["description"]
     try:
         appInfo["3440_1440_hex_fov_pattern"] = data[appInfo["appID"]]["3440_1440_hex_fov_pattern"]
     except KeyError:
@@ -248,11 +250,19 @@ def select_Game_GUI(values):
     else:
         window['Restore'].update(visible=False)
 
+    print(current_game)
+    try:
+        window['-DESCRIPTION-'].update(current_game['description'])
+    except KeyError:
+        window['-DESCRIPTION-'].update('')
+
+
 
 def resetGUI(values):
     global steam_lib_filepath
     window['-OUTPUT_BOX-'].update('')
     window['-CURRENT_GAME-'].update('')
+    window['-DESCRIPTION-'].update('')
     window['Patch'].update(visible=False)
     window['-LIST-'].update(values=[])
     steam_lib_filepath = Path(values['-STEAM_LIB_FILEPATH-'])
