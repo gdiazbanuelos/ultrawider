@@ -62,8 +62,7 @@ def createGUI():
     global window
     global steam_lib_filepath
 
-    sg.theme('DarkAmber')   # Add a touch of color
-    # All the stuff inside your window.
+    sg.theme('DarkAmber')
 
     layout = [
         [sg.T('Ultrawider',
@@ -79,16 +78,16 @@ def createGUI():
                                                    default_value=aspect_ratio_list[0], 
                                                    size=(30), readonly=True, enable_events=True)],
         [sg.T("")],
-        [sg.Listbox(values=[], size=(100, 15), enable_events=True, key='-LIST-', visible=False)],
+        [sg.Listbox(values=[], size=(200, 15), enable_events=True, key='-LIST-', visible=False)],
         [sg.T("", key='-CURRENT_GAME-')],
         [sg.T("", key='-DESCRIPTION-', font=(15))],
         [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
         [sg.T(key='-OUTPUT_BOX-', font=(15))]
     ]
 
-    # Create the Window
-    window = sg.Window('', layout, finalize=True)
-    
+    screen_x, screen_y = sg.Window.get_screen_size()
+    window = sg.Window('', layout, finalize=True, size=(800,600), location=(screen_x/2 - 400,screen_y/2 - 300))
+
 
 def guiLoop():
     global window
@@ -230,7 +229,6 @@ def getOffsets(appInfo):
         return 1
 
 
-
 def select_Game_GUI(values):
     global current_game
 
@@ -252,7 +250,7 @@ def select_Game_GUI(values):
 
     print(current_game)
     try:
-        window['-DESCRIPTION-'].update(current_game['description'])
+        window['-DESCRIPTION-'].update("Info regarding selected game:\n"+current_game['description'])
     except KeyError:
         window['-DESCRIPTION-'].update('')
 
