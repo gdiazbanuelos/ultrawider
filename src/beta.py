@@ -76,17 +76,20 @@ def createGUI():
         [sg.T("")],
         [sg.T("Aspect Ratio", font=(30)), sg.Combo(aspect_ratio_list, key='-ASPECT_RATIO-', 
                                                    default_value=aspect_ratio_list[0], 
-                                                   size=(30), readonly=True, enable_events=True)],
+                                                   size=(30), readonly=True, enable_events=True,
+                                                   font=(15))],
         [sg.T("")],
-        [sg.Listbox(values=[], size=(200, 15), enable_events=True, key='-LIST-', visible=False)],
+        [sg.Listbox(values=[], size=(200, 10), font=(15), enable_events=True, key='-LIST-', visible=False)],
         [sg.T("", key='-CURRENT_GAME-')],
         [sg.T("", key='-DESCRIPTION-', font=(15))],
+        [sg.T()],
         [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
         [sg.T(key='-OUTPUT_BOX-', font=(15))]
     ]
 
     screen_x, screen_y = sg.Window.get_screen_size()
-    window = sg.Window('', layout, finalize=True, size=(800,600), location=(screen_x/2 - 400,screen_y/2 - 300))
+    window_x, window_y = 800, 700
+    window = sg.Window('', layout, finalize=True, size=(window_x,window_y), location=(screen_x/2 - window_x/2,screen_y/2 - window_y/2))
 
 
 def guiLoop():
@@ -116,6 +119,7 @@ def guiLoop():
             restore_backup(current_game)
         if event == '-ASPECT_RATIO-':
             change_selected_aspect_ratio(values)
+            resetGUI(values)
         if event == '-STEAM_LIB_FILEPATH-':
             resetGUI(values)
     window.close()
@@ -179,9 +183,19 @@ def setGameEntry(appInfo):
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
     appInfo["description"] = data[appInfo["appID"]]["description"]
     try:
-        appInfo["3440_1440_hex_fov_pattern"] = data[appInfo["appID"]]["3440_1440_hex_fov_pattern"]
+        match selected_aspect_ratio:
+            case '21:9 (3440x1440)':
+                appInfo['apect_ratio_hex_patches'] = data[appInfo["appID"]]["3440_1440_hex_aspect_ratio_pattern"]
+            case '21:9 (2560x1080)':
+                appInfo['apect_ratio_hex_patches'] = data[appInfo["appID"]]["2560_1080_hex_aspect_ratio_pattern"]
+            case '21:9 (3840x1600)':
+                appInfo['apect_ratio_hex_patches'] = data[appInfo["appID"]]["3840_1600_hex_aspect_ratio_pattern"]
+            case _:
+                print("No matching aspect ratio was found!")
+                sys.exit()
     except KeyError:
-        appInfo["3440_1440_hex_fov_pattern"] = None
+        print("KEYERROR!")
+        sys.exit()
 
 
 def getOffsets(appInfo):
@@ -248,9 +262,13 @@ def select_Game_GUI(values):
     else:
         window['Restore'].update(visible=False)
 
-    print(current_game)
+    #print(current_game)
+    for key in current_game:
+        print(key+" : "+str(current_game[key]))
+    
     try:
-        window['-DESCRIPTION-'].update("Info regarding selected game:\n"+current_game['description'])
+        window['-DESCRIPTION-'].update(current_game['description'],
+                                       background_color="red", text_color="white")
     except KeyError:
         window['-DESCRIPTION-'].update('')
 
@@ -258,10 +276,11 @@ def select_Game_GUI(values):
 
 def resetGUI(values):
     global steam_lib_filepath
-    window['-OUTPUT_BOX-'].update('')
+    window['-OUTPUT_BOX-'].update('', background_color=('#2C2825'), text_color=('#FDCB52'))
     window['-CURRENT_GAME-'].update('')
-    window['-DESCRIPTION-'].update('')
+    window['-DESCRIPTION-'].update('', background_color=('#2C2825'), text_color=('#FDCB52'))
     window['Patch'].update(visible=False)
+    window['Restore'].update(visible=False)
     window['-LIST-'].update(values=[])
     steam_lib_filepath = Path(values['-STEAM_LIB_FILEPATH-'])
     if(open_VDF()):

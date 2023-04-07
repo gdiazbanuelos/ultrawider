@@ -27,7 +27,7 @@
         "2560_1080_hex_aspect_ratio_pattern": "[['39 8E E3 3F','26 B4 17 40']]",
         "3440_1440_hex_aspect_ratio_pattern": "[['39 8E E3 3F','60 E5 18 40']]",
         "3840_1600_hex_aspect_ratio_pattern": "[['39 8E E3 3F','9A 99 19 40']]",
-        "description": "Set Steam Launch Options to your screen resolution\n(right click on game in Steam, or the cog on the right -> properties -> launch options)\n\n-screen-width 3440 -screen-height 1440"
+        "description": "(right click on game in Steam, or the cog on the right -> properties -> launch options)\nSet Steam Launch Options to your screen resolution\n\n-screen-width 3440 -screen-height 1440"
     },
     "1190460": {
         "name": "Death Stranding",
