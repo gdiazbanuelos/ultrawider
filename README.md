@@ -42,7 +42,7 @@ Game Name (Steam App ID)
 # Building Ultrawider
 - Install Python
 - Install Pip3 packages: `pip3 install vdf pysimplegui pyinstaller`
-- Or run `pip3 install -r requirements.txt`
+- Or run `pip3 install -r ./dep/requirements.txt`
 <br/><br/>
 - To build on Windows: `python -m PyInstaller .\ultrawider.py --clean -F --add-data="games.json;." --add-data="hexalter.exe;." `
 - To build on Linux: `pyinstaller ultrawider.py --clean -F --add-data "games.json:." --add-data "hexalter:."`

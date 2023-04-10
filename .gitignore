@@ -153,6 +153,3 @@ cython_debug/
 
 backups/
 .vscode/
-libraryfolders.vdf
-old_ultrawider.py
-patcher.py

@@ -13,7 +13,7 @@ import shutil
 steam_lib_filepath = None
 steam_libraries = None
 
-# This the order that the values are set when the program is launched
+
 steam_paths = None
 steam_apps = None
 filtered_apps = None
