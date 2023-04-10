@@ -92,7 +92,7 @@ def createGUI():
         [sg.T()],
         [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
         [sg.T()],
-        [sg.T(key='-OUTPUT_BOX-', font=(15))]
+        [sg.Multiline(size=(200,10), key='-OUTPUT_BOX-', autoscroll=True, visible=False)]
     ]
 
     screen_x, screen_y = sg.Window.get_screen_size()
@@ -111,8 +111,8 @@ def guiLoop():
         filter_apps()
         window['-LIST-'].update(values=filtered_apps, visible=True)
     else:
-        window['-OUTPUT_BOX-'].update("Error! Find the \"libraryfolders.vdf\" file under <path_to_steam>/Steam/steamapps/", 
-        background_color="red", text_color="white")
+        window['-OUTPUT_BOX-'].update("Error! Find the \"libraryfolders.vdf\" file under <path_to_steam>/Steam/steamapps/\n", 
+        background_color="red", text_color="white", append=True, visible=True)
 
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
@@ -147,10 +147,10 @@ def restore_backup(steam_app):
         shutil.copy2(backup_path, steam_app["target_file_path"])
         backup_output = 'Back up of original file \'{}\' for {} was restored to:\n{}'\
             .format(steam_app["target_file"], steam_app["name"], steam_app["target_file_path"])
-        window['-OUTPUT_BOX-'].update(backup_output)
+        window['-OUTPUT_BOX-'].update(backup_output+'\n\n', append=True, visible=True)
     except FileNotFoundError:
         backup_output = 'Restore of original back failed! Backup file was not found!'
-        window['-OUTPUT_BOX-'].update(backup_output)
+        window['-OUTPUT_BOX-'].update(backup_output+'\n\n', append=True, visible=True)
 
 
 def patch_game():
@@ -161,7 +161,7 @@ def patch_game():
         window['Restore'].update(visible=True)
     else:
         output = "Target hex patterns not found! Game might already be patched?"
-        window['-OUTPUT_BOX-'].update(output)
+        window['-OUTPUT_BOX-'].update(output+'\n\n', append=True, visible=True)
 
 
 def patch_Offsets(appInfo):
@@ -183,7 +183,8 @@ def patch_Offsets(appInfo):
     #sys.exit()
     result = subprocess.run([str(path_to_patcher_exe)] + [appInfo["target_file_path"]] + [offset_patches][0], capture_output=True)
     print(result.stdout.decode())
-    window['-OUTPUT_BOX-'].update(backup_output+'\n\n'+result.stdout.decode()+"'{}' file was patched for {}".format(appInfo['target_file'], appInfo['name']))
+    output = backup_output+'\n\n'+result.stdout.decode()+"'{}' file was patched for {}".format(appInfo['target_file'], appInfo['name'])
+    window['-OUTPUT_BOX-'].update(output+'\n\n', append=True, visible=True)
     return 1
 
 
