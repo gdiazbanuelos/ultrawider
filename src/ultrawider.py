@@ -9,6 +9,7 @@ import re
 import json
 import ast
 import shutil
+import textwrap
 
 steam_lib_filepath = None
 steam_libraries = None
@@ -23,6 +24,7 @@ path_to_patcher_exe = None
 
 # PySimpleGui class text strings
 window = None
+backup_output = ""
 
 aspect_ratio_list = ['21:9 (3440x1440)', '21:9 (2560x1080)','21:9 (3840x1600)']
 selected_aspect_ratio = aspect_ratio_list[0]
@@ -89,6 +91,7 @@ def createGUI():
         [sg.T("", key='-DESCRIPTION-', font=(15))],
         [sg.T()],
         [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
+        [sg.T()],
         [sg.T(key='-OUTPUT_BOX-', font=(15))]
     ]
 
@@ -106,7 +109,7 @@ def guiLoop():
         get_steam_apps()
         get_app_mainifests()
         filter_apps()
-        window['-LIST-'].update(values=[filtered_apps], visible=True)
+        window['-LIST-'].update(values=filtered_apps, visible=True)
     else:
         window['-OUTPUT_BOX-'].update("Error! Find the \"libraryfolders.vdf\" file under <path_to_steam>/Steam/steamapps/", 
         background_color="red", text_color="white")
@@ -136,17 +139,18 @@ def change_selected_aspect_ratio(values):
 
 
 def restore_backup(steam_app):
-    
+    global backup_output
+
     backup_path = Path(
         "./backups/{}/{}".format(steam_app["appID"], steam_app["target_file"]))
     try:
         shutil.copy2(backup_path, steam_app["target_file_path"])
-        output = 'Back up of original file \'{}\' for {} was restored to:\n{}'\
+        backup_output = 'Back up of original file \'{}\' for {} was restored to:\n{}'\
             .format(steam_app["target_file"], steam_app["name"], steam_app["target_file_path"])
-        window['-OUTPUT_BOX-'].update(output)
+        window['-OUTPUT_BOX-'].update(backup_output)
     except FileNotFoundError:
-        output = 'Restore of original back failed! Backup file was not found!'
-        window['-OUTPUT_BOX-'].update(output)
+        backup_output = 'Restore of original back failed! Backup file was not found!'
+        window['-OUTPUT_BOX-'].update(backup_output)
 
 
 def patch_game():
@@ -179,12 +183,13 @@ def patch_Offsets(appInfo):
     #sys.exit()
     result = subprocess.run([str(path_to_patcher_exe)] + [appInfo["target_file_path"]] + [offset_patches][0], capture_output=True)
     print(result.stdout.decode())
-    window['-OUTPUT_BOX-'].update(result.stdout.decode()+"'{}' file was patched for {}".format(appInfo['target_file'], appInfo['name']))
+    window['-OUTPUT_BOX-'].update(backup_output+'\n\n'+result.stdout.decode()+"'{}' file was patched for {}".format(appInfo['target_file'], appInfo['name']))
     return 1
 
 
 def make_target_copy(appInfo):
-    
+    global backup_output
+
     backuppath = Path(
         "./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))
     try:
@@ -192,17 +197,17 @@ def make_target_copy(appInfo):
             Path(backuppath)))
         shutil.copy2(
             appInfo["target_file_path"], backuppath)
-        output = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
+        backup_output = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
             appInfo["target_file"], appInfo["name"], backuppath))
-        print(output)
+        print(backup_output)
         with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
             fp.write("This folder has the original backup of '{}' file for {}".format(
                 appInfo['target_file'], appInfo["name"]))
-        window['-OUTPUT_BOX-'].update(output)
+        # window['-OUTPUT_BOX-'].update(output)
 
     except FileExistsError:
-        output = "Backup file already exists! Skipping backup step!"
-        window['-OUTPUT_BOX-'].update(output)
+        backup_output = "Backup file already exists! Skipping backup step!"
+        # window['-OUTPUT_BOX-'].update(output)
 
 
 
@@ -282,7 +287,7 @@ def select_Game_GUI(values):
     window['-OUTPUT_BOX-'].update('')
 
     pattern = r"\(([^()]+)\)[^()]*$"
-    appID = re.findall(pattern, values['-LIST-'][0][0])[0]
+    appID = re.findall(pattern, values['-LIST-'][0])[0]
     current_game = get_selected_game(appID)
     window['-CURRENT_GAME-'].update("{} ({}):\n'{}'".format(current_game['name'], 
                                                                    current_game['appID'],
