@@ -37,8 +37,7 @@ Game Name (Steam App ID)
 - Patch FOV values
 - Added ability to patch other aspect ratios (32:9, 16:10)
 - Highlight already patched games in green
-- If default Steam location is not found, ability to manually select Steam install folder
-- Add JSON file to final build so that anyone can manually add games to patcher tool
+- Add optional JSON file to final build so that anyone can manually add games to patcher tool
 
 # Building Ultrawider
 - Install Python
@@ -49,6 +48,6 @@ Game Name (Steam App ID)
 - To build on Linux: `pyinstaller ultrawider.py --clean -F --add-data "games.json:." --add-data "hexalter:."`
 - Or on Windows: `.\build.ps1`
 - Or on Linux: `./build.sh`
-- Alternatively only build `ultrawider' on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` in the `./dest` folder
+- Alternatively only build `ultrawider' on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` or 'hexalter' (depending on platform, or use .exe with Wine on Linux) in the `./dest` folder
 <br/><br/>
-If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c`
+If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c` or `gcc -o hexalter.exe hexalter.c`
