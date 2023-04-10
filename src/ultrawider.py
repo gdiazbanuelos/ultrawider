@@ -23,7 +23,6 @@ path_to_patcher_exe = None
 
 # PySimpleGui class text strings
 window = None
-backup_out = None
 
 aspect_ratio_list = ['21:9 (3440x1440)', '21:9 (2560x1080)','21:9 (3840x1600)']
 selected_aspect_ratio = aspect_ratio_list[0]
@@ -141,26 +140,24 @@ def restore_backup(steam_app):
     backup_path = Path(
         "./backups/{}/{}".format(steam_app["appID"], steam_app["target_file"]))
     try:
-        shutil.copy2(
-            backup_path, steam_app["target_file_path"])
-
+        shutil.copy2(backup_path, steam_app["target_file_path"])
+        output = 'Back up of original file \'{}\' for {} was restored to:\n{}'\
+            .format(steam_app["target_file"], steam_app["name"], steam_app["target_file_path"])
+        window['-OUTPUT_BOX-'].update(output)
     except FileNotFoundError:
-        pass
+        output = 'Restore of original back failed! Backup file was not found!'
+        window['-OUTPUT_BOX-'].update(output)
 
 
 def patch_game():
-    if(get_Offsets(current_game)):
-        
-        print("\n\n=============================")
-        for x in current_game:
-            print(x, " : ", current_game[x])
-        
+    if(get_Offsets(current_game)):        
         make_target_copy(current_game)
         print("+++++++++++++++")
         patch_Offsets(current_game)
         window['Restore'].update(visible=True)
     else:
-        print("Offsets not found!")
+        output = "Target hex patterns not found! Game might already be patched?"
+        window['-OUTPUT_BOX-'].update(output)
 
 
 def patch_Offsets(appInfo):
@@ -177,20 +174,17 @@ def patch_Offsets(appInfo):
     #bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     #path_to_patcher_exe = os.path.abspath(os.path.join(bundle_dir,'hexalter.exe'))
 
-
-
-
     print('\n\n')
     print([str(path_to_patcher_exe)] + [appInfo["target_file_path"]] + [offset_patches][0])
     #sys.exit()
     result = subprocess.run([str(path_to_patcher_exe)] + [appInfo["target_file_path"]] + [offset_patches][0], capture_output=True)
     print(result.stdout.decode())
+    window['-OUTPUT_BOX-'].update(result.stdout.decode()+"'{}' file was patched for {}".format(appInfo['target_file'], appInfo['name']))
     return 1
 
 
-
 def make_target_copy(appInfo):
-    global backup_out
+    
     backuppath = Path(
         "./backups/{}/{}".format(appInfo["appID"], appInfo["target_file"]))
     try:
@@ -198,15 +192,18 @@ def make_target_copy(appInfo):
             Path(backuppath)))
         shutil.copy2(
             appInfo["target_file_path"], backuppath)
-        backup_out = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
+        output = ("Made a backup of unpatched file '{}' for {} in the backups folder:\n{}".format(
             appInfo["target_file"], appInfo["name"], backuppath))
-        print(backup_out)
+        print(output)
         with open(Path("./backups/{}/{}.txt".format(appInfo["appID"], appInfo["name"])), 'w') as fp:
             fp.write("This folder has the original backup of '{}' file for {}".format(
                 appInfo['target_file'], appInfo["name"]))
+        window['-OUTPUT_BOX-'].update(output)
 
     except FileExistsError:
-        backup_out = "Backup already exists! Game might already be patched?"
+        output = "Backup file already exists! Skipping backup step!"
+        window['-OUTPUT_BOX-'].update(output)
+
 
 
 def setGameEntry(appInfo):
@@ -280,6 +277,9 @@ def get_Offsets(appInfo):
 
 def select_Game_GUI(values):
     global current_game
+
+    window['-OUTPUT_BOX-'].update('')
+    window['-OUTPUT_BOX-'].update('')
 
     pattern = r"\(([^()]+)\)[^()]*$"
     appID = re.findall(pattern, values['-LIST-'][0][0])[0]
