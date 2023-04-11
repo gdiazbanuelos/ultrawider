@@ -1,5 +1,5 @@
 # Ultrawider
- An auto patcher for select games to be enjoyed in glorious 21:9 ultrawide
+ An auto patcher for select games to be enjoyed in other aspect ratios
 <br/><hr/>
 MFW a game doesn't have native ultrawide support
 
@@ -31,25 +31,23 @@ Game Name (Steam App ID)
 # Install
 - Download latest release: https://github.com/gdiazbanuelos/ultrawider/releases
 - Windows file: `ultrawider.exe`
-- Linux file: `ultrawider` (Wine must be installed! Future plans to remove this dependency)
+- Linux file: `ultrawider`
 
 # Future updates
 - Patch FOV values
-- Added ability to patch other aspect ratios (32:9, 16:10, other 21:9 non 3400x1440 resolutions)
+- Added ability to patch other aspect ratios (32:9, 16:10)
 - Highlight already patched games in green
-- If default Steam location is not found, ability to manually select Steam install folder
-- Add JSON file to final build so that anyone can manually add games to patcher tool
-- Remove need of Wine for Linux build
+- Add optional JSON file to final build so that anyone can manually add games to patcher tool
 
 # Building Ultrawider
 - Install Python
 - Install Pip3 packages: `pip3 install vdf pysimplegui pyinstaller`
-- Or run `pip3 install -r requirements.txt`
+- Or run `pip3 install -r ./dep/requirements.txt`
 <br/><br/>
 - To build on Windows: `python -m PyInstaller .\ultrawider.py --clean -F --add-data="games.json;." --add-data="hexalter.exe;." `
-- To build on Linux: `pyinstaller ultrawider.py --clean -F --add-data "games.json:." --add-data "hexalter.exe:."`
+- To build on Linux: `pyinstaller ultrawider.py --clean -F --add-data "games.json:." --add-data "hexalter:."`
 - Or on Windows: `.\build.ps1`
 - Or on Linux: `./build.sh`
-- Alternatively only build `ultrawider.exe` on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` in the `./dest` folder
+- Alternatively only build `ultrawider' on your platform without the `-add-data` commands, then place `games.json` and/or `hexalter.exe` or 'hexalter' (depending on platform, or use .exe with Wine on Linux) in the `./dest` folder
 <br/><br/>
-If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c`
+If you want to build `hexalter.exe` yourself, run `gcc -o hexalter.exe hexalter.c` or `gcc -o hexalter.exe hexalter.c`
