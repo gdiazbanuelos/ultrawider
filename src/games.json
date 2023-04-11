@@ -6,7 +6,6 @@
         "2560_1080_hex_aspect_ratio_pattern": "[['39 8E E3 3F', 'CD 90 18 40']]",
         "3440_1440_hex_aspect_ratio_pattern": "[['39 8E E3 3F', 'CD 90 18 40']]",
         "3840_1600_hex_aspect_ratio_pattern": "[['39 8E E3 3F', 'CD 90 18 40']]",
-        "description": "Patching a wider FOV is optional, if you feel the camera is too close"
     },
     "936790": {
         "name": "Life is Strange: True Colors",
@@ -18,7 +17,6 @@
         "2560_1080_hex_fov_pattern": "[['35 FA 0E 3C AC C5 27 37','35 FA 3E 3C AC C5 27 37']]",
         "3440_1440_hex_fov_pattern": "[['35 FA 0E 3C AC C5 27 37','35 FA 3E 3C AC C5 27 37']]",
         "3840_1600_hex_fov_pattern": "[['35 FA 0E 3C AC C5 27 37','35 FA 82 3C AC C5 27 37']]",
-        "description": "Patching a wider FOV is optional, if you feel the camera is too close"
     },
     "367520": {
         "name": "Hollow Knight",
