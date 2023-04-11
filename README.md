@@ -4,10 +4,10 @@
 MFW a game doesn't have native ultrawide support
 
 
-![alt text](images/marthi.png)
+![alt text](res/marthi.png)
 
 # GUI
-![My Image](images/ultrawidergui.png)
+![My Image](res/ultrawidergui.png)
 
 How it works:
 
