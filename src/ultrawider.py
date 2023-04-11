@@ -86,12 +86,10 @@ def createGUI():
                                                    size=(30), readonly=True, enable_events=True,
                                                    font=(15))],
         [sg.T("")],
-        [sg.Listbox(values=[], size=(200, 10), font=(15), enable_events=True, key='-LIST-', visible=False)],
+        [sg.Listbox(values=[], size=(200, 6), font=(15), enable_events=True, key='-LIST-', visible=False)],
         [sg.T("", key='-CURRENT_GAME-')],
         [sg.T("", key='-DESCRIPTION-', font=(15))],
-        [sg.T()],
         [sg.Button('Patch', visible=False), sg.Button('Restore', visible=False)],
-        [sg.T()],
         [sg.Multiline(size=(200,10), key='-OUTPUT_BOX-', autoscroll=True, visible=False)]
     ]
 
