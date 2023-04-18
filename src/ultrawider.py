@@ -217,7 +217,10 @@ def setGameEntry(appInfo):
     appInfo["target_file_path"] = Path(str(appInfo["install_path"]) + data[appInfo["appID"]]["local_path"])
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
     appInfo["target_file"] = data[appInfo["appID"]]["target_file"]
-    appInfo["description"] = data[appInfo["appID"]]["description"]
+    try:
+        appInfo["description"] = data[appInfo["appID"]]["description"]
+    except KeyError:
+        appInfo["description"] = ''
     try:
         match selected_aspect_ratio:
             case '21:9 (3440x1440)':
@@ -305,11 +308,9 @@ def select_Game_GUI(values):
     for key in current_game:
         print(key+" : "+str(current_game[key]))
     
-    try:
-        window['-DESCRIPTION-'].update(current_game['description'],
-                                       background_color="red", text_color="white")
-    except KeyError:
-        window['-DESCRIPTION-'].update('')
+    window['-DESCRIPTION-'].update(current_game['description'],
+                                       background_color=('#2C2825'), text_color=('#FDCB52'))
+  
 
 
 
@@ -326,7 +327,7 @@ def resetGUI(values):
         get_steam_apps()
         get_app_mainifests()
         filter_apps()
-        window['-LIST-'].update(values=[filtered_apps], visible=True)
+        window['-LIST-'].update(values=filtered_apps, visible=True)
 
 
 def get_steam_apps():
@@ -396,6 +397,7 @@ def filter_apps():
     bundle_dir = getattr(
         sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     path_to_help = os.path.abspath(os.path.join(bundle_dir, 'games.json'))
+    print(path_to_help)
     patch_list_dictionary = openJSON(path_to_help)
 
     patch_list = list(patch_list_dictionary.keys())
